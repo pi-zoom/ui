@@ -370,6 +370,9 @@ void lv_update_plugin_parameter(Plugin &plugin, PluginParameter &param){
 }
 
 void set_current_pedalboard(Pedalboard pedalboard){
+    if(currentPedalboard)
+        currentPedalboard.reset();
+
     currentPedalboard = std::make_unique<Pedalboard>(pedalboard);
     lv_pedalboard_create();
 }

@@ -80,13 +80,13 @@ struct Pedalboard
     {
         if (effectParamEditOverlay)
         {
-            lv_obj_delete(effectParamEditOverlay);
+            lv_obj_delete_async(effectParamEditOverlay);
             effectParamEditOverlay = nullptr;
         }
 
         if (plugins_container)
         {
-            lv_obj_delete(plugins_container);
+            lv_obj_delete_async(plugins_container);
             plugins_container = nullptr;
         }
     }

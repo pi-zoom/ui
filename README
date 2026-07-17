@@ -1,0 +1,13 @@
+This is the repository for the UI used in pi-zoom
+
+# Build
+```bash
+git submodule update --init --recursive
+
+# SDL
+cmake -B build
+make -j$(nproc)
+
+# DRM
+cmake -B build -DCONFIG=drm
+make -j$(nproc)

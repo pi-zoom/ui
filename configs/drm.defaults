@@ -1,0 +1,6 @@
+LV_COLOR_DEPTH          32
+LV_USE_EVDEV            1
+LV_USE_LINUX_DRM        1
+LV_USE_SDL              0
+LV_BUILD_EXAMPLES       0
+LV_BUILD_DEMOS          0

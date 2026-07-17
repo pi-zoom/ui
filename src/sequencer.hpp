@@ -1,0 +1,11 @@
+#ifndef SEQUENCER_HPP
+#define SEQUENCER_HPP
+#include <vector>
+#include "lvgl/lvgl.h"
+
+
+void bpm_changed(lv_event_t *e);
+void volume_changed(lv_event_t *e);
+void midi_file_changed(lv_event_t *e);
+
+#endif

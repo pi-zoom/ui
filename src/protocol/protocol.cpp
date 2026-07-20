@@ -113,6 +113,11 @@ Event decodeEvent(std::string &data)
             event = EventSequencerPosition{.pos = j["pos"].get<double>()};
             break;
         }
+        case EventType::EVENT_TUNER:
+        {
+            event = EventTuner{.note = j["note"].get<std::string>(), .cents = j["cents"].get<float>()};
+            break;
+        }
         default:
         {
             std::runtime_error("Unknown event type: " + static_cast<int>(eventType));

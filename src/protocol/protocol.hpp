@@ -145,7 +145,8 @@ enum class EventType {
     EVENT_PEDALBOARD_SNAPSHOT_CHANGED,
     EVENT_LOOP_LIST,
     EVENT_SEQUENCER_MIDI_FILES_LIST,
-    EVENT_SEQUENCER_POSITION
+    EVENT_SEQUENCER_POSITION,
+    EVENT_TUNER
 };
 
 struct EventLoopCount {
@@ -202,6 +203,11 @@ struct EventSequencerPosition {
     double pos;
 };
 
+struct EventTuner{
+    std::string note;
+    float cents;
+};
+
 using Event = std::variant<
     EventLoopCount,
     EventLoopPos,
@@ -214,7 +220,8 @@ using Event = std::variant<
     EventEffectParamChanged,
     EventPedalboardSnapshotChanged,
     EventSequencerMidiFilesList,
-    EventSequencerPosition
+    EventSequencerPosition,
+    EventTuner
 >;
 
 enum class CommandType {
@@ -229,7 +236,8 @@ enum class CommandType {
     CMD_SEQUENCER_BPM,
     CMD_SEQUENCER_VOLUME,
     CMD_SEQUENCER_SELECT_MIDI_FILE,
-    CMD_SEQUENCER_LIST_MIDI_FILES
+    CMD_SEQUENCER_LIST_MIDI_FILES,
+    CMD_TUNER
 };
 
 struct CmdListLoops {
@@ -280,6 +288,10 @@ struct CmdSequencerSelectMidiFile {
 
 struct CmdSequencerListMidiFiles {
 
+};
+
+struct CmdTuner {
+    bool state;
 };
 
 inline void to_json(json &j, const CmdListLoops &c)
@@ -362,6 +374,14 @@ inline void to_json(json &j, const CmdSequencerListMidiFiles &c){
         {"type", CommandType::CMD_SEQUENCER_LIST_MIDI_FILES}
     };
 }
+
+inline void to_json(json &j, const CmdTuner &c){
+    j = json{
+        {"type", CommandType::CMD_TUNER},
+        {"state", c.state}
+    };
+}
+
 using Cmd = std::variant<
     CmdListLoops,
     CmdAddLoop,
@@ -374,7 +394,8 @@ using Cmd = std::variant<
     CmdSequencerBpm,
     CmdSequencerVolume,
     CmdSequencerSelectMidiFile,
-    CmdSequencerListMidiFiles
+    CmdSequencerListMidiFiles,
+    CmdTuner
 >;
 
 Event decodeEvent(std::string &data);

@@ -18,6 +18,7 @@ enum ScreensEnum {
 typedef struct _objects_t {
     lv_obj_t *main;
     lv_obj_t *obj0;
+    lv_obj_t *tabview;
     lv_obj_t *sequencer;
     lv_obj_t *sequencer_control_panel;
     lv_obj_t *sequencer_midi_files_list;
@@ -44,6 +45,11 @@ typedef struct _objects_t {
     lv_obj_t *banks;
     lv_obj_t *snapshots;
     lv_obj_t *pedalboard_container;
+    lv_obj_t *tuner_panel;
+    lv_obj_t *tuner_note_label;
+    lv_obj_t *tuner_slider;
+    lv_obj_t *tuner_cents_label;
+    lv_obj_t *tuner_state;
 } objects_t;
 
 extern objects_t objects;

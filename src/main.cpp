@@ -6,6 +6,7 @@
 #include "mod.hpp"
 #include "looper.hpp"
 #include "sequencer.hpp"
+#include "tuner.hpp"
 
 // #include "rx/rx.hpp"
 #include "transport/zmq_transport.hpp"
@@ -123,6 +124,9 @@ void on_event_sequencer_position(EventSequencerPosition e){
     }
 }
 
+void on_event_tuner(EventTuner e){
+    tuner_update(e.note, e.cents);
+}
 /***/
 
 template <class... Ts>
@@ -158,7 +162,9 @@ const auto events_handlers = Overloaded{
     [](const EventSequencerMidiFilesList &m)
     { on_event_sequencer_midi_files_list(m); },
     [](const EventSequencerPosition &m)
-    { on_event_sequencer_position(m); }
+    { on_event_sequencer_position(m); },
+    [](const EventTuner &m)
+    { on_event_tuner(m); }
 };
 
 void readEvents(lv_timer_t *timer)
@@ -191,6 +197,9 @@ int main(int argc, char **argv)
     lv_obj_add_event_cb(objects.sequencer_midi_files_list, midi_file_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.sequencer_slider_bpm, bpm_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.sequencer_slider_volume, volume_changed, LV_EVENT_VALUE_CHANGED, NULL);
+
+    //tuner callbacks
+    lv_obj_add_event_cb(objects.tuner_state, tuner_state, LV_EVENT_VALUE_CHANGED, NULL);
 
     transport.sendCommand(CmdListLoops{});
     transport.sendCommand(CmdListPedalboards{});

@@ -1603,6 +1603,7 @@
                   },
                   "timeline": [],
                   "eventHandlers": [],
+                  "identifier": "Tuner",
                   "leftUnit": "px",
                   "topUnit": "px",
                   "widthUnit": "px",
@@ -1797,8 +1798,8 @@
                         {
                           "objID": "4838805f-75d3-4b00-8adf-2e59863e72ce",
                           "type": "LVGLSwitchWidget",
-                          "left": 108,
-                          "top": 119,
+                          "left": 21,
+                          "top": 23,
                           "width": 50,
                           "height": 25,
                           "customInputs": [],
@@ -1880,7 +1881,103 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "tabName": "Tab",
+                  "tabName": "Tuner",
+                  "tabNameType": "literal"
+                },
+                {
+                  "objID": "0b90faa3-8a1d-4ddc-f91a-78022c402970",
+                  "type": "LVGLTabWidget",
+                  "left": 0,
+                  "top": 0,
+                  "width": 964,
+                  "height": 548,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "01eae5d5-b2f1-43d0-be3d-bfe024c05d21",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "identifier": "Volume",
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "px",
+                  "heightUnit": "px",
+                  "children": [
+                    {
+                      "objID": "3396b514-805a-4515-bad8-0d950687bc3a",
+                      "type": "LVGLContainerWidget",
+                      "left": 1,
+                      "top": 5,
+                      "width": 920,
+                      "height": 502,
+                      "customInputs": [],
+                      "customOutputs": [],
+                      "style": {
+                        "objID": "182bf770-e144-4290-fcb4-bcbdac7e2a8d",
+                        "useStyle": "default",
+                        "conditionalStyles": [],
+                        "childStyles": []
+                      },
+                      "timeline": [],
+                      "eventHandlers": [],
+                      "identifier": "volume_panel",
+                      "leftUnit": "px",
+                      "topUnit": "px",
+                      "widthUnit": "px",
+                      "heightUnit": "px",
+                      "children": [],
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "hiddenFlagType": "literal",
+                      "clickableFlag": true,
+                      "clickableFlagType": "literal",
+                      "flagScrollbarMode": "",
+                      "flagScrollDirection": "",
+                      "scrollSnapX": "",
+                      "scrollSnapY": "",
+                      "checkedStateType": "literal",
+                      "disabledStateType": "literal",
+                      "states": "",
+                      "localStyles": {
+                        "objID": "9150f8a3-3fa1-45a9-a810-22f582a53a7a",
+                        "definition": {
+                          "MAIN": {
+                            "DEFAULT": {
+                              "border_color": "#4b66c4",
+                              "border_opa": 100,
+                              "border_width": 2,
+                              "bg_color": "#afabd6",
+                              "bg_opa": 100,
+                              "layout": "FLEX",
+                              "flex_flow": "ROW_WRAP"
+                            }
+                          }
+                        }
+                      },
+                      "group": "",
+                      "groupIndex": 0
+                    }
+                  ],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "hiddenFlagType": "literal",
+                  "clickableFlag": true,
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "localStyles": {
+                    "objID": "15234211-ea37-4191-a9a3-7e835b14e496"
+                  },
+                  "group": "",
+                  "groupIndex": 0,
+                  "tabName": "Volume",
                   "tabNameType": "literal"
                 }
               ],

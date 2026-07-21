@@ -393,7 +393,9 @@ void create_screen_main() {
                     }
                 }
                 {
-                    lv_obj_t *obj = lv_tabview_add_tab(parent_obj, "Tab");
+                    // Tuner
+                    lv_obj_t *obj = lv_tabview_add_tab(parent_obj, "Tuner");
+                    objects.tuner = obj;
                     {
                         lv_obj_t *parent_obj = obj;
                         {

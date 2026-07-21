@@ -23,6 +23,5 @@ void midi_file_changed(lv_event_t *e){
     lv_obj_t *obj = (lv_obj_t *)lv_event_get_target(e);
     char buf[100];
     lv_dropdown_get_selected_str(objects.sequencer_midi_files_list, buf, sizeof(buf));
-    std::cout << "MIDI file: " << std::string(buf) << std::endl;
     transport.sendCommand(CmdSequencerSelectMidiFile{.midiFile = std::string(buf)});
 }

@@ -45,6 +45,7 @@ typedef struct _objects_t {
     lv_obj_t *banks;
     lv_obj_t *snapshots;
     lv_obj_t *pedalboard_container;
+    lv_obj_t *tuner;
     lv_obj_t *tuner_panel;
     lv_obj_t *tuner_note_label;
     lv_obj_t *tuner_slider;

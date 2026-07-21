@@ -221,7 +221,6 @@ void set_loop_selected(int loop_id){
 }
 
 void set_loop_list(std::vector<Loop> loop_list){
-    std::cout << "list" << std::endl;
     for(int i; i < loops.size(); i++){
         remove_loop();
     }

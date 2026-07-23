@@ -369,23 +369,23 @@ void lv_update_plugin_parameter(Plugin &plugin, PluginParameter &param){
     }
 }
 
-void set_current_pedalboard(Pedalboard pedalboard){
+void mod_set_current_pedalboard(const EventPedalboardChanged &e){
     if(currentPedalboard)
         currentPedalboard.reset();
 
-    currentPedalboard = std::make_unique<Pedalboard>(pedalboard);
+    currentPedalboard = std::make_unique<Pedalboard>(e.pedalboard);
     lv_pedalboard_create();
 }
 
-void update_plugin_parameter(std::string instance_id, std::string symbol, float value){
+void mod_set_plugin_parameter(const EventEffectParamChanged &e){
     if (currentPedalboard == nullptr)
         return;
 
     for(Plugin &plugin: currentPedalboard->plugins){
-        if(plugin.instance_id == instance_id){
+        if(plugin.instance_id == e.instance_id){
             for(PluginParameter &param: plugin.parameters){
-                if(param.symbol == symbol){
-                    param.currentValue = value;
+                if(param.symbol == e.symbol){
+                    param.currentValue = e.value;
 
                     lv_update_plugin_parameter(plugin, param);
                     break;
@@ -395,12 +395,19 @@ void update_plugin_parameter(std::string instance_id, std::string symbol, float 
     }
 }
 
-void set_current_snapshot(int index){
+void mod_set_current_snapshot(const EventPedalboardSnapshotChanged &e){
     if (currentPedalboard == nullptr)
         return;
-    if(index >= currentPedalboard->snapshots.size())
+    if(e.index >= currentPedalboard->snapshots.size())
         return;
 
-    currentPedalboard->snapshot_index = index;
+    currentPedalboard->snapshot_index = e.index;
     lv_dropdown_set_selected(objects.snapshots, (uint32_t)(currentPedalboard->snapshot_index));
+}
+
+void mod_set_pedalboard_list(const EventPedalboardsList &e){
+    for (auto pedal : e.pedalboards)
+    {
+        lv_dropdown_add_option(objects.pedalboards, pedal.c_str(), LV_DROPDOWN_POS_LAST);
+    }
 }

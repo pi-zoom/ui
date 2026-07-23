@@ -4,6 +4,11 @@
 #include <vector>
 #include "lvgl/lvgl.h"
 
+struct EventPedalboardChanged;
+struct EventPedalboardSnapshotChanged;
+struct EventEffectParamChanged;
+struct EventPedalboardsList;
+
 struct Snapshot
 {
     int index;
@@ -98,9 +103,10 @@ struct Pedalboard
     lv_obj_t *effectParamEditOverlay = nullptr;
 };
 
-void set_current_pedalboard(Pedalboard pedalboard);
-void set_current_snapshot(int index);
-void update_plugin_parameter(std::string instance_id, std::string symbol, float value);
+void mod_set_current_pedalboard(const EventPedalboardChanged &e);
+void mod_set_current_snapshot(const EventPedalboardSnapshotChanged &e);
+void mod_set_plugin_parameter(const EventEffectParamChanged &e);
+void mod_set_pedalboard_list(const EventPedalboardsList &e);
 PluginParameterType plugin_parameter_get_type(const PluginParameter &param);
 
 void pedalboard_changed(lv_event_t *e);

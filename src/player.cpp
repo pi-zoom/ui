@@ -5,18 +5,19 @@
 #include "transport/zmq_transport.hpp"
 #include <list>
 
-bool playing = false;
 std::list<RecordedFile> recordedFiles;
 
 void play_clicked(lv_event_t *e){
 
     RecordedFile *recordedFile = (RecordedFile*)lv_event_get_user_data(e);
-    if(!playing){
-        playing = true;
-        transport.sendCommand(CmdPlayerPlay{.state = playing, .file = recordedFile->name});
+    if(!recordedFile->playing){
+        recordedFile->playing = true;
+        lv_label_set_text(recordedFile->play_button_label, "Playing");
+        transport.sendCommand(CmdPlayerPlay{.state = recordedFile->playing, .file = recordedFile->name});
     }else{
-        playing = false;
-        transport.sendCommand(CmdPlayerPlay{.state = playing, .file = ""});
+        recordedFile->playing = false;
+        lv_label_set_text(recordedFile->play_button_label, "Play");
+        transport.sendCommand(CmdPlayerPlay{.state = recordedFile->playing, .file = ""});
     }
 }
 
@@ -25,6 +26,7 @@ void lv_create_recorded_file(std::string name){
     recordedFiles.emplace_back();
     RecordedFile& recorded = recordedFiles.back();
     recorded.name = name;
+    recorded.playing = false;
 
     recorded.container = lv_obj_create(objects.player_files);
     lv_obj_set_size(recorded.container, LV_PCT(100), 50);
@@ -44,15 +46,15 @@ void lv_create_recorded_file(std::string name){
     lv_obj_set_size(recorded.label, LV_PCT(70), LV_PCT(70));
     lv_label_set_text(recorded.label, recorded.name.c_str());
 
-    lv_obj_t *button = lv_button_create(recorded.container);
-    lv_obj_set_pos(button, 788, 8);
-    lv_obj_set_size(button, LV_PCT(10), LV_PCT(70));
-    lv_obj_add_event_cb(button, play_clicked, LV_EVENT_CLICKED, (void*)&recorded);
+    recorded.play_button = lv_button_create(recorded.container);
+    lv_obj_set_pos(recorded.play_button, 788, 8);
+    lv_obj_set_size(recorded.play_button, LV_PCT(10), LV_PCT(70));
+    lv_obj_add_event_cb(recorded.play_button, play_clicked, LV_EVENT_CLICKED, (void*)&recorded);
 
-    lv_obj_t *button_label = lv_label_create(button);
-    lv_obj_set_size(button_label, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_style_align(button_label, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_label_set_text_static(button_label, "Play");
+    recorded.play_button_label = lv_label_create(recorded.play_button);
+    lv_obj_set_size(recorded.play_button_label, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_obj_set_style_align(recorded.play_button_label, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(recorded.play_button_label, "Play");
 }
 
 void player_record_changed(lv_event_t *e){
@@ -61,9 +63,9 @@ void player_record_changed(lv_event_t *e){
     transport.sendCommand(CmdPlayerRecord{.state = state});
 }
 
-void player_set_file_list(std::vector<std::string> files){
+void player_set_file_list(EventRecorderFileList e){
 
-    for (const auto& name : files) {
+    for (const auto& name : e.files) {
         bool found = false;
         for (auto it = recordedFiles.begin(); it != recordedFiles.end(); ++it) {
             if((*it).name == name){
@@ -75,4 +77,39 @@ void player_set_file_list(std::vector<std::string> files){
             lv_create_recorded_file(name);
         }
     }
+}
+
+void player_set_recording(EventRecorderRecording e){
+    for(RecordedFile &file: recordedFiles){
+        if(file.playing){
+            file.playing = false;
+            lv_label_set_text(file.play_button_label, "Play");
+        }
+    }
+
+    lv_obj_add_state(objects.player_record_button, LV_STATE_CHECKED);
+}
+
+void player_set_playing(EventRecorderPlaying e){
+
+    for(RecordedFile &record: recordedFiles){
+        if(record.name != e.file && record.playing){
+            record.playing = false;
+            lv_label_set_text(record.play_button_label, "Play");
+        }else if(record.name == e.file){
+            record.playing = true;
+            lv_label_set_text(record.play_button_label, "Playing");
+        }
+    }
+
+}
+
+void player_set_stopped(EventRecorderStopped e){
+    for(RecordedFile &record: recordedFiles){
+        if(record.playing){
+            record.playing = false;
+            lv_label_set_text(record.play_button_label, "Play");
+        }
+    }
+    lv_obj_remove_state(objects.player_record_button, LV_STATE_CHECKED);
 }

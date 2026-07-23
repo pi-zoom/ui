@@ -80,20 +80,20 @@ void add_loop()
     lv_loop_create(loop);
 }
 
-void set_loops_count(int count)
+void looper_set_loops_count(const EventLoopCount &e)
 {
-    if(count > loops.size()){
-        while(count > loops.size()){
+    if(e.count > loops.size()){
+        while(e.count > loops.size()){
             add_loop();
         }
     }else{
-        while(count < loops.size()){
+        while(e.count < loops.size()){
             remove_loop();
         }
     }
 }
 
-void set_loop_len(int loop_id, float len){
+void looper_set_loop_len(int loop_id, float len){
     if (loops.size() == 0)
     {
         return;
@@ -112,7 +112,7 @@ void set_loop_len(int loop_id, float len){
     lv_bar_set_max_value(L.bar, int(L.len * 100.0));
 }
 
-void set_loop_state(int loop_id, int state){
+void looper_set_loop_state(int loop_id, int state){
     if (loops.size() == 0)
     {
         return;
@@ -171,7 +171,7 @@ void set_loop_state(int loop_id, int state){
     }
 }
 
-void set_loop_pos(int loop_id, float pos){
+void looper_set_loop_pos(int loop_id, float pos){
     if (loops.size() == 0)
     {
         return;
@@ -195,19 +195,19 @@ void set_loop_pos(int loop_id, float pos){
     lv_bar_set_value(L.bar, int(pos * 100.0), LV_ANIM_OFF);
 }
 
-void set_loop_selected(int loop_id){
+void looper_set_loop_selected(const EventLoopSelected &e){
     if (loops.size() == 0)
     {
         return;
     }
-    if (loop_id >= loops.size())
+    if (e.id >= loops.size())
     {
         return;
     }
 
     for (size_t i = 0; i < loops.size(); ++i)
     {
-        if (i == loop_id)
+        if (i == e.id)
         {
             lv_obj_set_style_border_color(loops.at(i).container, lv_color_hex(0xd10c0c), LV_PART_MAIN);
             lv_obj_set_style_border_width(loops.at(i).container, 5, LV_PART_MAIN);
@@ -220,15 +220,15 @@ void set_loop_selected(int loop_id){
     }
 }
 
-void set_loop_list(std::vector<Loop> loop_list){
+void looper_set_loop_list(const EventLoopList &e){
     for(int i; i < loops.size(); i++){
         remove_loop();
     }
 
-    for(Loop &loop: loop_list){
+    for(const Loop &loop: e.loops){
         add_loop();
-        set_loop_len(loop.id, loop.len);
-        set_loop_pos(loop.id, loop.pos);
-        set_loop_state(loop.id, loop.state);
+        looper_set_loop_len(loop.id, loop.len);
+        looper_set_loop_pos(loop.id, loop.pos);
+        looper_set_loop_state(loop.id, loop.state);
     }
 }

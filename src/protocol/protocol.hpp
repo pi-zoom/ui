@@ -147,7 +147,10 @@ enum class EventType {
     EVENT_SEQUENCER_MIDI_FILES_LIST,
     EVENT_SEQUENCER_POSITION,
     EVENT_TUNER,
-    EVENT_RECORDED_FILE_LIST
+    EVENT_RECORDER_FILE_LIST,
+    EVENT_RECORDER_PLAYING,
+    EVENT_RECORDER_RECORDING,
+    EVENT_RECORDER_STOPPED
 };
 
 struct EventLoopCount {
@@ -209,8 +212,20 @@ struct EventTuner{
     float cents;
 };
 
-struct EventRecordedFileList {
+struct EventRecorderFileList {
     std::vector<std::string> files;
+};
+
+struct EventRecorderPlaying {
+    std::string file;
+};
+
+struct EventRecorderRecording {
+    int start;
+};
+
+struct EventRecorderStopped {
+
 };
 
 using Event = std::variant<
@@ -227,7 +242,10 @@ using Event = std::variant<
     EventSequencerMidiFilesList,
     EventSequencerPosition,
     EventTuner,
-    EventRecordedFileList
+    EventRecorderFileList,
+    EventRecorderPlaying,
+    EventRecorderRecording,
+    EventRecorderStopped
 >;
 
 enum class CommandType {

@@ -118,9 +118,24 @@ Event decodeEvent(std::string &data)
             event = EventTuner{.note = j["note"].get<std::string>(), .cents = j["cents"].get<float>()};
             break;
         }
-        case EventType::EVENT_RECORDED_FILE_LIST:
+        case EventType::EVENT_RECORDER_FILE_LIST:
         {
-            event = EventRecordedFileList{.files = j["files"].get<std::vector<std::string>>()};
+            event = EventRecorderFileList{.files = j["files"].get<std::vector<std::string>>()};
+            break;
+        }
+        case EventType::EVENT_RECORDER_PLAYING:
+        {
+            event = EventRecorderPlaying{.file = j["file"].get<std::string>()};
+            break;
+        }
+        case EventType::EVENT_RECORDER_RECORDING:
+        {
+            event = EventRecorderRecording{.start = j["start"].get<int>()};
+            break;
+        }
+        case EventType::EVENT_RECORDER_STOPPED:
+        {
+            event = EventRecorderStopped{};
             break;
         }
         default:

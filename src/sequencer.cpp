@@ -37,3 +37,16 @@ void sequencer_mute_changed(lv_event_t *e){
     bool mute = lv_obj_has_state(sw, LV_STATE_CHECKED);
     transport.sendCommand(CmdSequencerMute{.mute = mute});
 }
+
+void sequencer_set_file_list(const EventSequencerMidiFilesList &e){
+    lv_dropdown_clear_options(objects.sequencer_midi_files_list);
+    for(auto midi: e.midiFiles){
+        lv_dropdown_add_option(objects.sequencer_midi_files_list, midi.c_str(), LV_DROPDOWN_POS_LAST);
+    }
+}
+
+void sequencer_set_position(const EventSequencerPosition &e){
+    if(objects.sequencer_bar != nullptr){
+        lv_bar_set_value(objects.sequencer_bar, (int)(e.pos * 10.0), LV_ANIM_OFF);
+    }
+}

@@ -56,84 +56,9 @@ void init_ui()
     ui_init();
 }
 
-
-/**
- * Events handlers
- */
-void on_event_loop_count(EventLoopCount m)
-{
-    set_loops_count(m.count);
-}
-
-void on_event_loop_pos(EventLoopPos m)
-{
-    set_loop_pos(m.id, m.pos);
-}
-
-void on_event_loop_len(EventLoopLen m)
-{
-    set_loop_len(m.id, m.len);
-}
-
-void on_event_loop_state(EventLoopState m)
-{
-    set_loop_state(m.id, m.state);
-}
-
-void on_event_loop_list(EventLoopList m){
-    set_loop_list(m.loops);
-}
-
-void on_event_loop_selected(EventLoopSelected m)
-{
-    set_loop_selected(int(m.id));
-}
-
-void on_event_pedalboards_list(EventPedalboardsList m)
-{
-    for (auto pedal : m.pedalboards)
-    {
-        lv_dropdown_add_option(objects.pedalboards, pedal.c_str(), LV_DROPDOWN_POS_LAST);
-    }
-}
-
-void on_event_pedalboard_changed(EventPedalboardChanged m)
-{
-    set_current_pedalboard(m.pedalboard);
-}
-
-void on_event_effect_param_changed(EventEffectParamChanged e)
-{
-    update_plugin_parameter(e.instance_id, e.symbol, e.value);
-}
-
-void on_event_pedalboard_snapshot_changed(EventPedalboardSnapshotChanged e)
-{
-    set_current_snapshot(e.index);
-}
-
-void on_event_sequencer_midi_files_list(EventSequencerMidiFilesList e){
-    lv_dropdown_clear_options(objects.sequencer_midi_files_list);
-    for(auto midi: e.midiFiles){
-        lv_dropdown_add_option(objects.sequencer_midi_files_list, midi.c_str(), LV_DROPDOWN_POS_LAST);
-    }
-}
-
-void on_event_sequencer_position(EventSequencerPosition e){
-    if(objects.sequencer_bar != nullptr){
-        lv_bar_set_value(objects.sequencer_bar, (int)(e.pos * 10.0), LV_ANIM_OFF);
-    }
-}
-
 void on_event_tuner(EventTuner e){
     tuner_update(e.note, e.cents);
 }
-
-void on_event_recorded_file_list(EventRecordedFileList e){
-    player_set_file_list(e.files);
-}
-
-/***/
 
 template <class... Ts>
 struct Overloaded : Ts...
@@ -146,33 +71,39 @@ Overloaded(Ts...) -> Overloaded<Ts...>;
 
 const auto events_handlers = Overloaded{
     [](const EventLoopCount &m)
-    { on_event_loop_count(m); },
+    { looper_set_loops_count(m); },
     [](const EventLoopPos &m)
-    { on_event_loop_pos(m); },
+    { looper_set_loop_pos(m.id, m.pos); },
     [](const EventLoopState &m)
-    { on_event_loop_state(m); },
+    { looper_set_loop_state(m.id, m.state); },
     [](const EventLoopLen &m)
-    { on_event_loop_len(m); },
+    { looper_set_loop_len(m.id, m.len); },
     [](const EventLoopList &m)
-    { on_event_loop_list(m); },
+    { looper_set_loop_list(m); },
     [](const EventLoopSelected &m)
-    { on_event_loop_selected(m); },
+    { looper_set_loop_selected(m); },
     [](const EventPedalboardsList &m)
-    { on_event_pedalboards_list(m); },
+    { mod_set_pedalboard_list(m); },
     [](const EventPedalboardChanged &m)
-    { on_event_pedalboard_changed(m); },
+    { mod_set_current_pedalboard(m); },
     [](const EventEffectParamChanged &m)
-    { on_event_effect_param_changed(m); },
+    { mod_set_plugin_parameter(m); },
     [](const EventPedalboardSnapshotChanged &m)
-    { on_event_pedalboard_snapshot_changed(m); },
+    { mod_set_current_snapshot(m); },
     [](const EventSequencerMidiFilesList &m)
-    { on_event_sequencer_midi_files_list(m); },
+    { sequencer_set_file_list(m); },
     [](const EventSequencerPosition &m)
-    { on_event_sequencer_position(m); },
+    { sequencer_set_position(m); },
     [](const EventTuner &m)
     { on_event_tuner(m); },
-    [](const EventRecordedFileList &m)
-    { on_event_recorded_file_list(m); }
+    [](const EventRecorderFileList &m)
+    { player_set_file_list(m); },
+    [](const EventRecorderPlaying &m)
+    { player_set_playing(m); },
+    [](const EventRecorderRecording&m)
+    { player_set_recording(m); },
+    [](const EventRecorderStopped &m)
+    { player_set_stopped(m); }
 };
 
 void readEvents(lv_timer_t *timer)

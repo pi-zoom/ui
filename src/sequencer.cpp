@@ -25,3 +25,15 @@ void midi_file_changed(lv_event_t *e){
     lv_dropdown_get_selected_str(objects.sequencer_midi_files_list, buf, sizeof(buf));
     transport.sendCommand(CmdSequencerSelectMidiFile{.midiFile = std::string(buf)});
 }
+
+void sequencer_state_changed(lv_event_t *e){
+    lv_obj_t *sw = lv_event_get_target_obj(e);
+    bool state = lv_obj_has_state(sw, LV_STATE_CHECKED);
+    transport.sendCommand(CmdSequencerState{.state = state});
+}
+
+void sequencer_mute_changed(lv_event_t *e){
+    lv_obj_t *sw = lv_event_get_target_obj(e);
+    bool mute = lv_obj_has_state(sw, LV_STATE_CHECKED);
+    transport.sendCommand(CmdSequencerMute{.mute = mute});
+}

@@ -31,6 +31,10 @@ typedef struct _objects_t {
     lv_obj_t *sequencer_volume_value;
     lv_obj_t *sequencer_display_panel;
     lv_obj_t *sequencer_bar;
+    lv_obj_t *sequencer_state_button;
+    lv_obj_t *sequencer_mute_button;
+    lv_obj_t *sequencer_state_label;
+    lv_obj_t *sequencer_mute_label;
     lv_obj_t *looper;
     lv_obj_t *loop_control;
     lv_obj_t *loop_add_button;
@@ -51,6 +55,8 @@ typedef struct _objects_t {
     lv_obj_t *tuner_slider;
     lv_obj_t *tuner_cents_label;
     lv_obj_t *tuner_state;
+    lv_obj_t *volume;
+    lv_obj_t *volume_panel;
 } objects_t;
 
 extern objects_t objects;

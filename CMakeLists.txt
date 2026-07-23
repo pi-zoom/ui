@@ -102,8 +102,12 @@ endif()
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ZMQ REQUIRED libzmq)
+pkg_check_modules(JSON REQUIRED nlohmann_json)
+
 list(APPEND PKG_CONFIG_LIB ${ZMQ_LIBRARIES})
+list(APPEND PKG_CONFIG_LIB ${JSON_LIBRARIES})
 list(APPEND PKG_CONFIG_INC ${ZMQ_INCLUDE_DIRS})
+list(APPEND PKG_CONFIG_INC ${JSON_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SOURCES src/*.c src/*.cpp)
 file(GLOB_RECURSE HEADERS src/*.h src/*.hpp)

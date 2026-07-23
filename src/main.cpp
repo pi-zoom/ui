@@ -197,6 +197,8 @@ int main(int argc, char **argv)
     lv_obj_add_event_cb(objects.sequencer_midi_files_list, midi_file_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.sequencer_slider_bpm, bpm_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.sequencer_slider_volume, volume_changed, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.sequencer_mute_button, sequencer_mute_changed, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.sequencer_state_button, sequencer_state_changed, LV_EVENT_VALUE_CHANGED, NULL);
 
     //tuner callbacks
     lv_obj_add_event_cb(objects.tuner_state, tuner_state, LV_EVENT_VALUE_CHANGED, NULL);

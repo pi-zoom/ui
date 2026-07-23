@@ -51,7 +51,6 @@ void create_screen_main() {
             lv_obj_set_size(obj, 1024, 548);
             lv_tabview_set_tab_bar_position(obj, LV_DIR_LEFT);
             lv_tabview_set_tab_bar_size(obj, 60);
-            lv_tabview_set_active(obj, 3, LV_ANIM_OFF);
             {
                 lv_obj_t *parent_obj = obj;
                 {
@@ -101,7 +100,7 @@ void create_screen_main() {
                                     lv_obj_t *obj = lv_slider_create(parent_obj);
                                     objects.sequencer_slider_bpm = obj;
                                     lv_obj_set_pos(obj, 327, 46);
-                                    lv_obj_set_size(obj, 244, 11);
+                                    lv_obj_set_size(obj, 244, 32);
                                     lv_slider_set_range(obj, 20, 150);
                                     lv_slider_set_value(obj, 120, LV_ANIM_OFF);
                                 }
@@ -126,7 +125,7 @@ void create_screen_main() {
                                     lv_obj_t *obj = lv_slider_create(parent_obj);
                                     objects.sequencer_slider_volume = obj;
                                     lv_obj_set_pos(obj, 646, 47);
-                                    lv_obj_set_size(obj, 224, 11);
+                                    lv_obj_set_size(obj, 224, 31);
                                     lv_slider_set_value(obj, 50, LV_ANIM_OFF);
                                 }
                                 {
@@ -173,6 +172,36 @@ void create_screen_main() {
                                     lv_obj_set_pos(obj, 33, 37);
                                     lv_obj_set_size(obj, 838, 16);
                                     lv_bar_set_range(obj, 0, 1000);
+                                }
+                                {
+                                    // sequencer_state_button
+                                    lv_obj_t *obj = lv_switch_create(parent_obj);
+                                    objects.sequencer_state_button = obj;
+                                    lv_obj_set_pos(obj, 116, 156);
+                                    lv_obj_set_size(obj, 90, 38);
+                                }
+                                {
+                                    // sequencer_mute_button
+                                    lv_obj_t *obj = lv_switch_create(parent_obj);
+                                    objects.sequencer_mute_button = obj;
+                                    lv_obj_set_pos(obj, 585, 156);
+                                    lv_obj_set_size(obj, 90, 38);
+                                }
+                                {
+                                    // sequencer_state_label
+                                    lv_obj_t *obj = lv_label_create(parent_obj);
+                                    objects.sequencer_state_label = obj;
+                                    lv_obj_set_pos(obj, 142, 128);
+                                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                                    lv_label_set_text_static(obj, "State");
+                                }
+                                {
+                                    // sequencer_mute_label
+                                    lv_obj_t *obj = lv_label_create(parent_obj);
+                                    objects.sequencer_mute_label = obj;
+                                    lv_obj_set_pos(obj, 609, 128);
+                                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                                    lv_label_set_text_static(obj, "Mute");
                                 }
                             }
                         }
@@ -454,10 +483,38 @@ void create_screen_main() {
                                     // tuner_state
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.tuner_state = obj;
-                                    lv_obj_set_pos(obj, 108, 119);
+                                    lv_obj_set_pos(obj, 21, 23);
                                     lv_obj_set_size(obj, 50, 25);
                                 }
                             }
+                        }
+                    }
+                }
+                {
+                    // Volume
+                    lv_obj_t *obj = lv_tabview_add_tab(parent_obj, "Volume");
+                    objects.volume = obj;
+                    {
+                        lv_obj_t *parent_obj = obj;
+                        {
+                            // volume_panel
+                            lv_obj_t *obj = lv_obj_create(parent_obj);
+                            objects.volume_panel = obj;
+                            lv_obj_set_pos(obj, 1, 5);
+                            lv_obj_set_size(obj, 920, 502);
+                            lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_pad_top(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_remove_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                            lv_obj_set_style_border_color(obj, lv_color_hex(0x4b66c4), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_border_opa(obj, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xafabd6), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_opa(obj, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_layout(obj, LV_LAYOUT_FLEX, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_flex_flow(obj, LV_FLEX_FLOW_ROW_WRAP, LV_PART_MAIN | LV_STATE_DEFAULT);
                         }
                     }
                 }

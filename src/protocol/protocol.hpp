@@ -237,6 +237,8 @@ enum class CommandType {
     CMD_SEQUENCER_VOLUME,
     CMD_SEQUENCER_SELECT_MIDI_FILE,
     CMD_SEQUENCER_LIST_MIDI_FILES,
+    CMD_SEQUENCER_STATE,
+    CMD_SEQUENCER_MUTE,
     CMD_TUNER
 };
 
@@ -288,6 +290,14 @@ struct CmdSequencerSelectMidiFile {
 
 struct CmdSequencerListMidiFiles {
 
+};
+
+struct CmdSequencerState {
+    bool state;
+};
+
+struct CmdSequencerMute {
+    bool mute;
 };
 
 struct CmdTuner {
@@ -375,6 +385,20 @@ inline void to_json(json &j, const CmdSequencerListMidiFiles &c){
     };
 }
 
+inline void to_json(json &j, const CmdSequencerState &c){
+    j = json{
+        {"type", CommandType::CMD_SEQUENCER_STATE},
+        {"state", c.state}
+    };
+}
+
+inline void to_json(json &j, const CmdSequencerMute &c){
+    j = json{
+        {"type", CommandType::CMD_SEQUENCER_MUTE},
+        {"mute", c.mute}
+    };
+}
+
 inline void to_json(json &j, const CmdTuner &c){
     j = json{
         {"type", CommandType::CMD_TUNER},
@@ -395,6 +419,8 @@ using Cmd = std::variant<
     CmdSequencerVolume,
     CmdSequencerSelectMidiFile,
     CmdSequencerListMidiFiles,
+    CmdSequencerState,
+    CmdSequencerMute,
     CmdTuner
 >;
 

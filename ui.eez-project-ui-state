@@ -169,8 +169,7 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -193,7 +192,7 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 50.07715168739479,
+              "weight": 52.17289151572188,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -236,12 +235,12 @@
             {
               "type": "row",
               "id": "#8ef45dd9-7398-4e72-882e-f735d0ff896f",
-              "weight": 29.671263885262547,
+              "weight": 27.575524056935457,
               "children": [
                 {
                   "type": "tabset",
                   "id": "#928674d6-f608-433e-bc2f-6d38015a662c",
-                  "weight": 2.0359628770301623,
+                  "weight": 2.4594222833562585,
                   "children": [
                     {
                       "type": "tab",
@@ -251,12 +250,13 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
                   "id": "#9abf12f4-a991-4cf9-b487-82d3ce768416",
-                  "weight": 0.9640371229698376,
+                  "weight": 0.5405777166437414,
                   "children": [
                     {
                       "type": "tab",
@@ -1138,7 +1138,14 @@
       "selectionFront": {},
       "selectionBack": {
         "0": {
-          "1": {}
+          "1": {
+            "1": {},
+            "3": {
+              "1": {
+                "$selected": true
+              }
+            }
+          }
         }
       },
       "transform": {
@@ -1191,11 +1198,11 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "KNOB",
+  "lvglPart": "MAIN",
   "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
-    "TEXT",
-    "BACKGROUND"
+    "MARGIN",
+    "LAYOUT"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,

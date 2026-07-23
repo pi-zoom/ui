@@ -146,7 +146,8 @@ enum class EventType {
     EVENT_LOOP_LIST,
     EVENT_SEQUENCER_MIDI_FILES_LIST,
     EVENT_SEQUENCER_POSITION,
-    EVENT_TUNER
+    EVENT_TUNER,
+    EVENT_RECORDED_FILE_LIST
 };
 
 struct EventLoopCount {
@@ -208,6 +209,10 @@ struct EventTuner{
     float cents;
 };
 
+struct EventRecordedFileList {
+    std::vector<std::string> files;
+};
+
 using Event = std::variant<
     EventLoopCount,
     EventLoopPos,
@@ -221,7 +226,8 @@ using Event = std::variant<
     EventPedalboardSnapshotChanged,
     EventSequencerMidiFilesList,
     EventSequencerPosition,
-    EventTuner
+    EventTuner,
+    EventRecordedFileList
 >;
 
 enum class CommandType {
@@ -239,7 +245,9 @@ enum class CommandType {
     CMD_SEQUENCER_LIST_MIDI_FILES,
     CMD_SEQUENCER_STATE,
     CMD_SEQUENCER_MUTE,
-    CMD_TUNER
+    CMD_TUNER,
+    CMD_PLAYER_RECORD,
+    CMD_PLAYER_PLAY,
 };
 
 struct CmdListLoops {
@@ -298,6 +306,15 @@ struct CmdSequencerState {
 
 struct CmdSequencerMute {
     bool mute;
+};
+
+struct CmdPlayerRecord {
+    bool state;
+};
+
+struct CmdPlayerPlay {
+    bool state;
+    std::string file;
 };
 
 struct CmdTuner {
@@ -399,6 +416,21 @@ inline void to_json(json &j, const CmdSequencerMute &c){
     };
 }
 
+inline void to_json(json &j, const CmdPlayerRecord &c){
+    j = json{
+        {"type", CommandType::CMD_PLAYER_RECORD},
+        {"state", c.state}
+    };
+}
+
+inline void to_json(json &j, const CmdPlayerPlay &c){
+    j = json{
+        {"type", CommandType::CMD_PLAYER_PLAY},
+        {"state", c.state},
+        {"file", c.file}
+    };
+}
+
 inline void to_json(json &j, const CmdTuner &c){
     j = json{
         {"type", CommandType::CMD_TUNER},
@@ -421,7 +453,9 @@ using Cmd = std::variant<
     CmdSequencerListMidiFiles,
     CmdSequencerState,
     CmdSequencerMute,
-    CmdTuner
+    CmdTuner,
+    CmdPlayerRecord,
+    CmdPlayerPlay
 >;
 
 Event decodeEvent(std::string &data);

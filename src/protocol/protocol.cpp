@@ -118,6 +118,11 @@ Event decodeEvent(std::string &data)
             event = EventTuner{.note = j["note"].get<std::string>(), .cents = j["cents"].get<float>()};
             break;
         }
+        case EventType::EVENT_RECORDED_FILE_LIST:
+        {
+            event = EventRecordedFileList{.files = j["files"].get<std::vector<std::string>>()};
+            break;
+        }
         default:
         {
             std::runtime_error("Unknown event type: " + static_cast<int>(eventType));

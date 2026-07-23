@@ -7,6 +7,7 @@
 #include "looper.hpp"
 #include "sequencer.hpp"
 #include "tuner.hpp"
+#include "player.hpp"
 
 // #include "rx/rx.hpp"
 #include "transport/zmq_transport.hpp"
@@ -127,6 +128,11 @@ void on_event_sequencer_position(EventSequencerPosition e){
 void on_event_tuner(EventTuner e){
     tuner_update(e.note, e.cents);
 }
+
+void on_event_recorded_file_list(EventRecordedFileList e){
+    player_set_file_list(e.files);
+}
+
 /***/
 
 template <class... Ts>
@@ -164,7 +170,9 @@ const auto events_handlers = Overloaded{
     [](const EventSequencerPosition &m)
     { on_event_sequencer_position(m); },
     [](const EventTuner &m)
-    { on_event_tuner(m); }
+    { on_event_tuner(m); },
+    [](const EventRecordedFileList &m)
+    { on_event_recorded_file_list(m); }
 };
 
 void readEvents(lv_timer_t *timer)
@@ -199,6 +207,9 @@ int main(int argc, char **argv)
     lv_obj_add_event_cb(objects.sequencer_slider_volume, volume_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.sequencer_mute_button, sequencer_mute_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.sequencer_state_button, sequencer_state_changed, LV_EVENT_VALUE_CHANGED, NULL);
+
+    //player callbacks
+    lv_obj_add_event_cb(objects.player_record_button, player_record_changed, LV_EVENT_VALUE_CHANGED, NULL);
 
     //tuner callbacks
     lv_obj_add_event_cb(objects.tuner_state, tuner_state, LV_EVENT_VALUE_CHANGED, NULL);

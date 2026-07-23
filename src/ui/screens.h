@@ -49,6 +49,11 @@ typedef struct _objects_t {
     lv_obj_t *banks;
     lv_obj_t *snapshots;
     lv_obj_t *pedalboard_container;
+    lv_obj_t *player;
+    lv_obj_t *play_control;
+    lv_obj_t *player_record_button;
+    lv_obj_t *player_recording_duration_label;
+    lv_obj_t *player_files;
     lv_obj_t *tuner;
     lv_obj_t *tuner_panel;
     lv_obj_t *tuner_note_label;

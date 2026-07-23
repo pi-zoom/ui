@@ -3,9 +3,9 @@
 #include <vector>
 #include "lvgl/lvgl.h"
 
-struct EventLoopCount;
-struct EventLoopSelected;
-struct EventLoopList;
+struct EventLooperLoopCount;
+struct EventLooperLoopSelected;
+struct EventLooperLoopList;
 
 /**
  * Looper part
@@ -25,12 +25,12 @@ struct Loop
 //****/
 
 // void add_loop();
-void looper_set_loops_count(const EventLoopCount &e);
+void looper_set_loops_count(const EventLooperLoopCount &e);
 void looper_set_loop_pos(int loop_id, float pos);
 void looper_set_loop_state(int loop_id, int state);
 void looper_set_loop_len(int loop_id, float len);
-void looper_set_loop_selected(const EventLoopSelected &e);
-void looper_set_loop_list(const EventLoopList &e);
+void looper_set_loop_selected(const EventLooperLoopSelected &e);
+void looper_set_loop_list(const EventLooperLoopList &e);
 
 void add_loop_clicked(lv_event_t *e);
 void remove_loop_clicked(lv_event_t *e);

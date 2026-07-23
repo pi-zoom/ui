@@ -134,67 +134,71 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
 //     snapshot_id)
 
 enum class EventType {
-    EVENT_LOOP_COUNT,
-    EVENT_LOOP_POS,
-    EVENT_LOOP_LEN,
-    EVENT_LOOP_STATE,
-    EVENT_LOOP_SELECTED,
-    EVENT_PEDALBOARDS_LIST,
-    EVENT_PEDALBOARD_CHANGED,
-    EVENT_EFFECT_PARAM_CHANGED,
-    EVENT_PEDALBOARD_SNAPSHOT_CHANGED,
-    EVENT_LOOP_LIST,
+    EVENT_LOOPER_LOOP_COUNT,
+    EVENT_LOOPER_LOOP_POS,
+    EVENT_LOOPER_LOOP_LEN,
+    EVENT_LOOPER_LOOP_STATE,
+    EVENT_LOOPER_LOOP_SELECTED,
+    EVENT_LOOPER_LOOP_LIST,
+
+    EVENT_MOD_PEDALBOARDS_LIST,
+    EVENT_MOD_PEDALBOARD_CHANGED,
+    EVENT_MOD_EFFECT_PARAM_CHANGED,
+    EVENT_MOD_PEDALBOARD_SNAPSHOT_CHANGED,
+
     EVENT_SEQUENCER_MIDI_FILES_LIST,
     EVENT_SEQUENCER_POSITION,
+
     EVENT_TUNER,
+
     EVENT_RECORDER_FILE_LIST,
     EVENT_RECORDER_PLAYING,
     EVENT_RECORDER_RECORDING,
     EVENT_RECORDER_STOPPED
 };
 
-struct EventLoopCount {
+struct EventLooperLoopCount {
     int count;
 };
 
-struct EventLoopPos {
+struct EventLooperLoopPos {
     int id;
     double pos;
 };
 
-struct EventLoopState {
+struct EventLooperLoopState {
     int id;
     int state;
 };
 
-struct EventLoopLen {
+struct EventLooperLoopLen {
     int id;
     double len;
 };
 
-struct EventLoopList {
+struct EventLooperLoopList {
     std::vector<Loop> loops;
 };
 
-struct EventLoopSelected {
+struct EventLooperLoopSelected {
     int id;
 };
 
-struct EventPedalboardsList {
+struct EventModPedalboardsList {
     std::vector<std::string> pedalboards;
 };
 
-struct EventPedalboardChanged {
+struct EventModPedalboardChanged {
     Pedalboard pedalboard;
 };
 
-struct EventEffectParamChanged {
+struct EventModEffectParamChanged {
     std::string instance_id;
     std::string symbol;
     float value;
 };
 
-struct EventPedalboardSnapshotChanged {
+struct EventModPedalboardSnapshotChanged {
     int index;
     std::string name;
 };
@@ -229,16 +233,16 @@ struct EventRecorderStopped {
 };
 
 using Event = std::variant<
-    EventLoopCount,
-    EventLoopPos,
-    EventLoopState,
-    EventLoopLen,
-    EventLoopList,
-    EventLoopSelected,
-    EventPedalboardsList,
-    EventPedalboardChanged,
-    EventEffectParamChanged,
-    EventPedalboardSnapshotChanged,
+    EventLooperLoopCount,
+    EventLooperLoopPos,
+    EventLooperLoopState,
+    EventLooperLoopLen,
+    EventLooperLoopList,
+    EventLooperLoopSelected,
+    EventModPedalboardsList,
+    EventModPedalboardChanged,
+    EventModEffectParamChanged,
+    EventModPedalboardSnapshotChanged,
     EventSequencerMidiFilesList,
     EventSequencerPosition,
     EventTuner,
@@ -249,56 +253,60 @@ using Event = std::variant<
 >;
 
 enum class CommandType {
-    CMD_ADD_LOOP,
-    CMD_REMOVE_LOOP,
-    CMD_SELECT_LOOP,
-    CMD_SELECT_PEDALBOARD,
-    CMD_EFFECT_PARAM_SET,
-    CMD_LIST_PEDALBOARDS,
-    CMD_SELECT_PEDALBOARD_SNAPSHOT,
-    CMD_LIST_LOOPS,
+    CMD_LOOPER_ADD_LOOP,
+    CMD_LOOPER_REMOVE_LOOP,
+    CMD_LOOPER_SELECT_LOOP,
+    CMD_LOOPER_LIST_LOOPS,
+
+    CMD_MOD_SELECT_PEDALBOARD,
+    CMD_MOD_EFFECT_PARAM_SET,
+    CMD_MOD_LIST_PEDALBOARDS,
+    CMD_MOD_SELECT_PEDALBOARD_SNAPSHOT,
+
     CMD_SEQUENCER_BPM,
     CMD_SEQUENCER_VOLUME,
     CMD_SEQUENCER_SELECT_MIDI_FILE,
     CMD_SEQUENCER_LIST_MIDI_FILES,
     CMD_SEQUENCER_STATE,
     CMD_SEQUENCER_MUTE,
+
     CMD_TUNER,
-    CMD_PLAYER_RECORD,
-    CMD_PLAYER_PLAY,
+
+    CMD_RECORDER_RECORD,
+    CMD_RECORDER_PLAY,
 };
 
-struct CmdListLoops {
-
-};
-
-struct CmdAddLoop {
+struct CmdLooperListLoops {
 
 };
 
-struct CmdRemoveLoop {
+struct CmdLooperAddLoop {
 
 };
 
-struct CmdSelectLoop {
+struct CmdLooperRemoveLoop {
+
+};
+
+struct CmdLooperSelectLoop {
     int id;
 };
 
-struct CmdSelectPedalboard {
+struct CmdModSelectPedalboard {
     std::string name;
 };
 
-struct CmdSetEffectParam {
+struct CmdModEffectParamSet {
     std::string instande_id;
     std::string symbol;
     float value;
 };
 
-struct CmdListPedalboards {
+struct CmdModListPedalboards {
 
 };
 
-struct CmdSelectPedalboardSnapshot {
+struct CmdModSelectPedalboardSnapshot {
     int index;
 };
 
@@ -339,57 +347,57 @@ struct CmdTuner {
     bool state;
 };
 
-inline void to_json(json &j, const CmdListLoops &c)
+inline void to_json(json &j, const CmdLooperListLoops &c)
 {
     j = json{
-        {"type", CommandType::CMD_LIST_LOOPS}};
+        {"type", CommandType::CMD_LOOPER_LIST_LOOPS}};
 }
 
-inline void to_json(json &j, const CmdAddLoop &c)
+inline void to_json(json &j, const CmdLooperAddLoop &c)
 {
     j = json{
-        {"type", CommandType::CMD_ADD_LOOP}};
+        {"type", CommandType::CMD_LOOPER_ADD_LOOP}};
 }
 
-inline void to_json(json &j, const CmdRemoveLoop &c)
+inline void to_json(json &j, const CmdLooperRemoveLoop &c)
 {
     j = json{
-        {"type", CommandType::CMD_REMOVE_LOOP}};
+        {"type", CommandType::CMD_LOOPER_REMOVE_LOOP}};
 }
 
-inline void to_json(json &j, const CmdSelectLoop &c)
+inline void to_json(json &j, const CmdLooperSelectLoop &c)
 {
     j = json{
-        {"type", CommandType::CMD_SELECT_LOOP},
+        {"type", CommandType::CMD_LOOPER_SELECT_LOOP},
         {"id", c.id}};
 }
 
-inline void to_json(json &j, const CmdSelectPedalboard &c)
+inline void to_json(json &j, const CmdModSelectPedalboard &c)
 {
     j = json{
-        {"type", CommandType::CMD_SELECT_PEDALBOARD},
+        {"type", CommandType::CMD_MOD_SELECT_PEDALBOARD},
         {"name", c.name}};
 }
 
-inline void to_json(json &j, const CmdSetEffectParam &c)
+inline void to_json(json &j, const CmdModEffectParamSet &c)
 {
     j = json{
-        {"type", CommandType::CMD_EFFECT_PARAM_SET},
+        {"type", CommandType::CMD_MOD_EFFECT_PARAM_SET},
         {"instance_id", c.instande_id},
         {"symbol", c.symbol},
         {"value", c.value}};
 }
 
-inline void to_json(json &j, const CmdListPedalboards &c)
+inline void to_json(json &j, const CmdModListPedalboards &c)
 {
     j = json{
-        {"type", CommandType::CMD_LIST_PEDALBOARDS}};
+        {"type", CommandType::CMD_MOD_LIST_PEDALBOARDS}};
 }
 
-inline void to_json(json &j, const CmdSelectPedalboardSnapshot &c)
+inline void to_json(json &j, const CmdModSelectPedalboardSnapshot &c)
 {
     j = json{
-        {"type", CommandType::CMD_SELECT_PEDALBOARD_SNAPSHOT},
+        {"type", CommandType::CMD_MOD_SELECT_PEDALBOARD_SNAPSHOT},
         {"index", c.index}};
 }
 
@@ -436,14 +444,14 @@ inline void to_json(json &j, const CmdSequencerMute &c){
 
 inline void to_json(json &j, const CmdPlayerRecord &c){
     j = json{
-        {"type", CommandType::CMD_PLAYER_RECORD},
+        {"type", CommandType::CMD_RECORDER_RECORD},
         {"state", c.state}
     };
 }
 
 inline void to_json(json &j, const CmdPlayerPlay &c){
     j = json{
-        {"type", CommandType::CMD_PLAYER_PLAY},
+        {"type", CommandType::CMD_RECORDER_PLAY},
         {"state", c.state},
         {"file", c.file}
     };
@@ -457,14 +465,14 @@ inline void to_json(json &j, const CmdTuner &c){
 }
 
 using Cmd = std::variant<
-    CmdListLoops,
-    CmdAddLoop,
-    CmdRemoveLoop,
-    CmdSelectLoop,
-    CmdSelectPedalboard,
-    CmdSetEffectParam,
-    CmdListPedalboards,
-    CmdSelectPedalboardSnapshot,
+    CmdLooperListLoops,
+    CmdLooperAddLoop,
+    CmdLooperRemoveLoop,
+    CmdLooperSelectLoop,
+    CmdModSelectPedalboard,
+    CmdModEffectParamSet,
+    CmdModListPedalboards,
+    CmdModSelectPedalboardSnapshot,
     CmdSequencerBpm,
     CmdSequencerVolume,
     CmdSequencerSelectMidiFile,

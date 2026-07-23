@@ -13,19 +13,19 @@ int selected_loop = -1;
 
 void add_loop_clicked(lv_event_t *e)
 {
-    transport.sendCommand(CmdAddLoop{});
+    transport.sendCommand(CmdLooperAddLoop{});
 }
 
 void remove_loop_clicked(lv_event_t *e)
 {
-    transport.sendCommand(CmdRemoveLoop{});
+    transport.sendCommand(CmdLooperRemoveLoop{});
 }
 
 
 void loop_clicked(lv_event_t *e)
 {
     Loop *loop = (Loop*)lv_event_get_user_data(e);
-    transport.sendCommand(CmdSelectLoop{.id = loop->id});
+    transport.sendCommand(CmdLooperSelectLoop{.id = loop->id});
 }
 
 void lv_loop_create(Loop &loop){
@@ -80,7 +80,7 @@ void add_loop()
     lv_loop_create(loop);
 }
 
-void looper_set_loops_count(const EventLoopCount &e)
+void looper_set_loops_count(const EventLooperLoopCount &e)
 {
     if(e.count > loops.size()){
         while(e.count > loops.size()){
@@ -195,7 +195,7 @@ void looper_set_loop_pos(int loop_id, float pos){
     lv_bar_set_value(L.bar, int(pos * 100.0), LV_ANIM_OFF);
 }
 
-void looper_set_loop_selected(const EventLoopSelected &e){
+void looper_set_loop_selected(const EventLooperLoopSelected &e){
     if (loops.size() == 0)
     {
         return;
@@ -220,7 +220,7 @@ void looper_set_loop_selected(const EventLoopSelected &e){
     }
 }
 
-void looper_set_loop_list(const EventLoopList &e){
+void looper_set_loop_list(const EventLooperLoopList &e){
     for(int i; i < loops.size(); i++){
         remove_loop();
     }

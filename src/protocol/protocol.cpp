@@ -21,39 +21,39 @@ Event decodeEvent(std::string &data)
 
         switch (eventType)
         {
-        case EventType::EVENT_LOOP_COUNT:
+        case EventType::EVENT_LOOPER_LOOP_COUNT:
         {
-            event = EventLoopCount{.count = j["count"].get<int>()};
+            event = EventLooperLoopCount{.count = j["count"].get<int>()};
             break;
         }
 
-        case EventType::EVENT_LOOP_POS:
+        case EventType::EVENT_LOOPER_LOOP_POS:
         {
-            event = EventLoopPos{.id = j["id"].get<int>(), .pos = j["pos"].get<double>()};
+            event = EventLooperLoopPos{.id = j["id"].get<int>(), .pos = j["pos"].get<double>()};
             break;
         }
 
-        case EventType::EVENT_LOOP_STATE:
+        case EventType::EVENT_LOOPER_LOOP_STATE:
         {
-            event = EventLoopState{.id = j["id"].get<int>(), .state = j["state"].get<int>()};
+            event = EventLooperLoopState{.id = j["id"].get<int>(), .state = j["state"].get<int>()};
             break;
         }
-        case EventType::EVENT_LOOP_LEN:
+        case EventType::EVENT_LOOPER_LOOP_LEN:
         {
-            event = EventLoopLen{.id = j["id"].get<int>(), .len = j["len"].get<double>()};
+            event = EventLooperLoopLen{.id = j["id"].get<int>(), .len = j["len"].get<double>()};
             break;
         }
-        case EventType::EVENT_LOOP_SELECTED:
+        case EventType::EVENT_LOOPER_LOOP_SELECTED:
         {
-            event = EventLoopSelected{.id = j["id"].get<int>()};
+            event = EventLooperLoopSelected{.id = j["id"].get<int>()};
             break;
         }
-        case EventType::EVENT_PEDALBOARDS_LIST:
+        case EventType::EVENT_MOD_PEDALBOARDS_LIST:
         {
-            event = EventPedalboardsList{.pedalboards = j["pedalboards"].get<std::vector<std::string>>()};
+            event = EventModPedalboardsList{.pedalboards = j["pedalboards"].get<std::vector<std::string>>()};
             break;
         }
-        case EventType::EVENT_PEDALBOARD_CHANGED:
+        case EventType::EVENT_MOD_PEDALBOARD_CHANGED:
         {
             nlohmann::json jsonPedalboard = j["pedalboard"];
             Pedalboard pedalboard;
@@ -83,24 +83,24 @@ Event decodeEvent(std::string &data)
                 }
                 pedalboard.plugins.push_back(std::move(plugin));
             }
-            event = EventPedalboardChanged{.pedalboard = pedalboard};
+            event = EventModPedalboardChanged{.pedalboard = pedalboard};
             break;
         }
-        case EventType::EVENT_EFFECT_PARAM_CHANGED:
+        case EventType::EVENT_MOD_EFFECT_PARAM_CHANGED:
         {
-            event = EventEffectParamChanged{.instance_id = j["instance_id"].get<std::string>(), .symbol = j["symbol"].get<std::string>(), .value = j["value"].get<float>()};
+            event = EventModEffectParamChanged{.instance_id = j["instance_id"].get<std::string>(), .symbol = j["symbol"].get<std::string>(), .value = j["value"].get<float>()};
             break;
         }
-        case EventType::EVENT_PEDALBOARD_SNAPSHOT_CHANGED:
+        case EventType::EVENT_MOD_PEDALBOARD_SNAPSHOT_CHANGED:
         {
-            event = EventPedalboardSnapshotChanged{.index = j["index"].get<int>(), .name = j["name"].get<std::string>()};
+            event = EventModPedalboardSnapshotChanged{.index = j["index"].get<int>(), .name = j["name"].get<std::string>()};
             break;
         }
-        case EventType::EVENT_LOOP_LIST:
+        case EventType::EVENT_LOOPER_LOOP_LIST:
         {
             std::vector<Loop> loops;
             j.at("loops").get_to(loops);
-            event = EventLoopList{.loops = loops};
+            event = EventLooperLoopList{.loops = loops};
             break;
         }
         case EventType::EVENT_SEQUENCER_MIDI_FILES_LIST:

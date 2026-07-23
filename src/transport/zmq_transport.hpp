@@ -72,22 +72,22 @@ class ZmqTransport{
     public:
 // bool ZmqTransport::addLoop()
 // {
-//     commandsQueue.push(CmdAddLoop{});
+//     commandsQueue.push(CmdLooperAddLoop{});
 // }
 
 // bool ZmqTransport::removeLoop()
 // {
-//     commandsQueue.push(CmdRemoveLoop{});
+//     commandsQueue.push(CmdLooperRemoveLoop{});
 // }
 
 // void ZmqTransport::selectLoop(int loop)
 // {
-//     commandsQueue.push(CmdSelectLoop{.id = loop});
+//     commandsQueue.push(CmdLooperSelectLoop{.id = loop});
 // }
 
 // void ZmqTransport::selectPedalboard(std::string name)
 // {
-//     commandsQueue.push(CmdSelectPedalboard{.name = name});
+//     commandsQueue.push(CmdModSelectPedalboard{.name = name});
 //     // std::string msg = "SelectPedalboard " + name;
 //     // ZmqTransport::message_t message(msg.data(), msg.size());
 //     // std::cout << msg << std::endl;
@@ -96,7 +96,7 @@ class ZmqTransport{
 
 // void ZmqTransport::setEffectParam(std::string pluginName, std::string paramName, float value)
 // {
-//     commandsQueue.push(CmdSetEffectParam{.pluginName = pluginName, .parameterName = paramName, .value = value});
+//     commandsQueue.push(CmdModEffectParamSet{.pluginName = pluginName, .parameterName = paramName, .value = value});
 //     // std::string msg = "SetParam " + pluginName + " " + paramName + " " + std::to_string(value);
 //     // ZmqTransport::message_t message(msg.data(), msg.size());
 //     // std::cout << msg << std::endl;

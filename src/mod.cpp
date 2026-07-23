@@ -32,7 +32,7 @@ void plugin_bypass_changed(lv_event_t *e)
     }
     param->currentValue = value;
 
-    transport.sendCommand(CmdSetEffectParam{.instande_id = param->plugin_instance_id, .symbol = param->symbol, .value = param->currentValue});
+    transport.sendCommand(CmdModEffectParamSet{.instande_id = param->plugin_instance_id, .symbol = param->symbol, .value = param->currentValue});
 }
 
 void plugin_parameter_changed(lv_event_t *e)
@@ -54,7 +54,7 @@ void plugin_parameter_changed(lv_event_t *e)
         break;
     }
 
-    transport.sendCommand(CmdSetEffectParam{.instande_id = param->plugin_instance_id, .symbol = param->symbol, .value = param->currentValue});
+    transport.sendCommand(CmdModEffectParamSet{.instande_id = param->plugin_instance_id, .symbol = param->symbol, .value = param->currentValue});
 }
 
 void pedalboard_changed(lv_event_t *e)
@@ -68,7 +68,7 @@ void pedalboard_changed(lv_event_t *e)
 
     if (currentPedalboard->name != std::string(buf))
     {
-        transport.sendCommand(CmdSelectPedalboard{.name = std::string(buf)});
+        transport.sendCommand(CmdModSelectPedalboard{.name = std::string(buf)});
     }
 }
 
@@ -78,7 +78,7 @@ void pedalboard_snapshot_changed(lv_event_t *e)
     uint32_t selected = lv_dropdown_get_selected(objects.snapshots);
     if(selected != currentPedalboard->snapshot_index){
         currentPedalboard->snapshot_index = selected;
-        transport.sendCommand(CmdSelectPedalboardSnapshot{.index=(int)selected});
+        transport.sendCommand(CmdModSelectPedalboardSnapshot{.index=(int)selected});
     }
 }
 
@@ -369,7 +369,7 @@ void lv_update_plugin_parameter(Plugin &plugin, PluginParameter &param){
     }
 }
 
-void mod_set_current_pedalboard(const EventPedalboardChanged &e){
+void mod_set_current_pedalboard(const EventModPedalboardChanged &e){
     if(currentPedalboard)
         currentPedalboard.reset();
 
@@ -377,7 +377,7 @@ void mod_set_current_pedalboard(const EventPedalboardChanged &e){
     lv_pedalboard_create();
 }
 
-void mod_set_plugin_parameter(const EventEffectParamChanged &e){
+void mod_set_plugin_parameter(const EventModEffectParamChanged &e){
     if (currentPedalboard == nullptr)
         return;
 
@@ -395,7 +395,7 @@ void mod_set_plugin_parameter(const EventEffectParamChanged &e){
     }
 }
 
-void mod_set_current_snapshot(const EventPedalboardSnapshotChanged &e){
+void mod_set_current_snapshot(const EventModPedalboardSnapshotChanged &e){
     if (currentPedalboard == nullptr)
         return;
     if(e.index >= currentPedalboard->snapshots.size())
@@ -405,7 +405,7 @@ void mod_set_current_snapshot(const EventPedalboardSnapshotChanged &e){
     lv_dropdown_set_selected(objects.snapshots, (uint32_t)(currentPedalboard->snapshot_index));
 }
 
-void mod_set_pedalboard_list(const EventPedalboardsList &e){
+void mod_set_pedalboard_list(const EventModPedalboardsList &e){
     for (auto pedal : e.pedalboards)
     {
         lv_dropdown_add_option(objects.pedalboards, pedal.c_str(), LV_DROPDOWN_POS_LAST);

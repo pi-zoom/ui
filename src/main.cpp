@@ -70,25 +70,25 @@ template <class... Ts>
 Overloaded(Ts...) -> Overloaded<Ts...>;
 
 const auto events_handlers = Overloaded{
-    [](const EventLoopCount &m)
+    [](const EventLooperLoopCount &m)
     { looper_set_loops_count(m); },
-    [](const EventLoopPos &m)
+    [](const EventLooperLoopPos &m)
     { looper_set_loop_pos(m.id, m.pos); },
-    [](const EventLoopState &m)
+    [](const EventLooperLoopState &m)
     { looper_set_loop_state(m.id, m.state); },
-    [](const EventLoopLen &m)
+    [](const EventLooperLoopLen &m)
     { looper_set_loop_len(m.id, m.len); },
-    [](const EventLoopList &m)
+    [](const EventLooperLoopList &m)
     { looper_set_loop_list(m); },
-    [](const EventLoopSelected &m)
+    [](const EventLooperLoopSelected &m)
     { looper_set_loop_selected(m); },
-    [](const EventPedalboardsList &m)
+    [](const EventModPedalboardsList &m)
     { mod_set_pedalboard_list(m); },
-    [](const EventPedalboardChanged &m)
+    [](const EventModPedalboardChanged &m)
     { mod_set_current_pedalboard(m); },
-    [](const EventEffectParamChanged &m)
+    [](const EventModEffectParamChanged &m)
     { mod_set_plugin_parameter(m); },
-    [](const EventPedalboardSnapshotChanged &m)
+    [](const EventModPedalboardSnapshotChanged &m)
     { mod_set_current_snapshot(m); },
     [](const EventSequencerMidiFilesList &m)
     { sequencer_set_file_list(m); },
@@ -145,8 +145,8 @@ int main(int argc, char **argv)
     //tuner callbacks
     lv_obj_add_event_cb(objects.tuner_state, tuner_state, LV_EVENT_VALUE_CHANGED, NULL);
 
-    transport.sendCommand(CmdListLoops{});
-    transport.sendCommand(CmdListPedalboards{});
+    transport.sendCommand(CmdLooperListLoops{});
+    transport.sendCommand(CmdModListPedalboards{});
     transport.sendCommand(CmdSequencerListMidiFiles{});
 
     uint32_t sleep_ms;

@@ -2609,7 +2609,25 @@
   ],
   "lvglStyles": {
     "objID": "a31bd004-35c5-b3fb-5c8b-78ea5c7693b8",
-    "styles": [],
+    "styles": [
+      {
+        "objID": "93906edc-95a8-441a-a8db-891b86be4e11",
+        "name": "tilebuttonstyle",
+        "forWidgetType": "LVGLUserWidgetWidget",
+        "childStyles": [],
+        "definition": {
+          "objID": "25c302cd-7488-4945-b4e7-d0e6e0a96674",
+          "definition": {
+            "MAIN": {
+              "DEFAULT": {
+                "bg_color": "#a9244b",
+                "bg_opa": 100
+              }
+            }
+          }
+        }
+      }
+    ],
     "defaultStyles": {}
   },
   "lvglGroups": {

@@ -2,6 +2,7 @@
   "navigation": {
     "selectedUserPageObject": "[ui.eez-project]:/userPages/0",
     "selectedUserWidgetObject": "[ui.eez-project]:/userWidgets/0",
+    "selectedStyleObject": "[ui.eez-project]:/lvglStyles/styles/-1",
     "selectedThemeObject": "[ui.eez-project]:/themes/0",
     "selectedBitmapObject": "[ui.eez-project]:/bitmaps/2",
     "subnavigationSelectedItems": {
@@ -26,6 +27,7 @@
           },
           {
             "type": "border",
+            "selected": 0,
             "size": 240,
             "location": "right",
             "children": [
@@ -192,7 +194,7 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 52.17289151572188,
+              "weight": 32.23058968032317,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -235,7 +237,7 @@
             {
               "type": "row",
               "id": "#8ef45dd9-7398-4e72-882e-f735d0ff896f",
-              "weight": 27.575524056935457,
+              "weight": 47.517825892334166,
               "children": [
                 {
                   "type": "tabset",
@@ -883,7 +885,8 @@
                       "component": "styles",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -1138,14 +1141,7 @@
       "selectionFront": {},
       "selectionBack": {
         "0": {
-          "1": {
-            "1": {},
-            "3": {
-              "1": {
-                "$selected": true
-              }
-            }
-          }
+          "0": {}
         }
       },
       "transform": {
@@ -1184,6 +1180,9 @@
         "secondToPx": 200,
         "scrollLeft": 0
       }
+    },
+    "[ui.eez-project]:/lvglStyles/styles[tree-state]": {
+      "0": {}
     }
   },
   "activeOutputSection": 0,
@@ -1201,8 +1200,7 @@
   "lvglPart": "MAIN",
   "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
-    "MARGIN",
-    "LAYOUT"
+    "BACKGROUND"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,

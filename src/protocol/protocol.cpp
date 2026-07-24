@@ -100,7 +100,7 @@ Event decodeEvent(std::string &data)
         {
             std::vector<Loop> loops;
             j.at("loops").get_to(loops);
-            event = EventLooperLoopList{.loops = loops};
+            event = EventLooperLoopList{.loops = loops, .selected = j["selected"].get<int>()};
             break;
         }
         case EventType::EVENT_SEQUENCER_MIDI_FILES_LIST:
@@ -111,11 +111,6 @@ Event decodeEvent(std::string &data)
         case EventType::EVENT_SEQUENCER_POSITION:
         {
             event = EventSequencerPosition{.pos = j["pos"].get<double>()};
-            break;
-        }
-        case EventType::EVENT_TUNER:
-        {
-            event = EventTuner{.note = j["note"].get<std::string>(), .cents = j["cents"].get<float>()};
             break;
         }
         case EventType::EVENT_RECORDER_FILE_LIST:

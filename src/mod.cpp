@@ -7,6 +7,11 @@
 
 static std::unique_ptr<Pedalboard> currentPedalboard = nullptr;
 
+static lv_obj_t *pedalboardsDropdown = nullptr;
+static lv_obj_t *bankDropdown = nullptr;
+static lv_obj_t *snapshotsDropdown = nullptr;
+static lv_obj_t *effectsContainer = nullptr;
+
 std::string formatFloatParameter(float value, std::string unit)
 {
     char buf[32];
@@ -61,7 +66,7 @@ void pedalboard_changed(lv_event_t *e)
 {
     lv_obj_t *obj = (lv_obj_t *)lv_event_get_target(e);
     char buf[100];
-    lv_dropdown_get_selected_str(objects.pedalboards, buf, sizeof(buf));
+    lv_dropdown_get_selected_str(pedalboardsDropdown, buf, sizeof(buf));
 
     if(currentPedalboard == nullptr)
         return;
@@ -75,7 +80,7 @@ void pedalboard_changed(lv_event_t *e)
 void pedalboard_snapshot_changed(lv_event_t *e)
 {
     lv_obj_t *obj = (lv_obj_t *)lv_event_get_target(e);
-    uint32_t selected = lv_dropdown_get_selected(objects.snapshots);
+    uint32_t selected = lv_dropdown_get_selected(snapshotsDropdown);
     if(selected != currentPedalboard->snapshot_index){
         currentPedalboard->snapshot_index = selected;
         transport.sendCommand(CmdModSelectPedalboardSnapshot{.index=(int)selected});
@@ -212,13 +217,13 @@ void lv_plugin_overlay_create(lv_event_t *e)
         lv_obj_set_size(currentPedalboard->effectParamEditOverlay, LV_PCT(100), LV_PCT(100));
         lv_obj_set_style_bg_color(currentPedalboard->effectParamEditOverlay, lv_color_black(), 0);
         lv_obj_set_style_bg_opa(currentPedalboard->effectParamEditOverlay, LV_OPA_60, 0);
-        lv_obj_clear_flag(currentPedalboard->effectParamEditOverlay, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_scrollable(currentPedalboard->effectParamEditOverlay, false);
 
         /* -----------------------------
          * Main window panel
          * ----------------------------- */
         lv_obj_t *panel = lv_obj_create(currentPedalboard->effectParamEditOverlay);
-        lv_obj_set_size(panel, 500, 400);
+        lv_obj_set_size(panel, LV_PCT(90), LV_PCT(90));
         lv_obj_center(panel);
 
         lv_obj_set_style_bg_color(panel, lv_color_hex(0x1e1e1e), 0);
@@ -312,23 +317,23 @@ void lv_pedalboard_create(){
         return;
 
     // set pedalboard dropdown
-    int32_t index = lv_dropdown_get_option_index(objects.pedalboards, currentPedalboard->name.c_str());
+    int32_t index = lv_dropdown_get_option_index(pedalboardsDropdown, currentPedalboard->name.c_str());
     if (index < 0)
     {
         std::cout << "Unable to get index for pedalboard: " << currentPedalboard->name << std::endl;
         return;
     }
-    lv_dropdown_set_selected(objects.pedalboards, index);
+    lv_dropdown_set_selected(pedalboardsDropdown, index);
 
     // set snapshots dropdown
-    lv_dropdown_clear_options(objects.snapshots);
+    lv_dropdown_clear_options(snapshotsDropdown);
     for (const Snapshot &snapshot : currentPedalboard->snapshots)
     {
-        lv_dropdown_add_option(objects.snapshots, snapshot.name.c_str(), LV_DROPDOWN_POS_LAST);
+        lv_dropdown_add_option(snapshotsDropdown, snapshot.name.c_str(), LV_DROPDOWN_POS_LAST);
     }
-    lv_dropdown_set_selected(objects.snapshots, (uint32_t)(currentPedalboard->snapshot_index));
+    lv_dropdown_set_selected(snapshotsDropdown, (uint32_t)(currentPedalboard->snapshot_index));
 
-    currentPedalboard->plugins_container = lv_obj_create(objects.pedalboard_container);
+    currentPedalboard->plugins_container = lv_obj_create(effectsContainer);
     lv_obj_set_size(currentPedalboard->plugins_container, LV_PCT(100), LV_PCT(100));
     lv_obj_set_style_flex_flow(currentPedalboard->plugins_container, LV_FLEX_FLOW_ROW_WRAP, LV_PART_MAIN);
     lv_obj_set_style_layout(currentPedalboard->plugins_container, LV_LAYOUT_FLEX, LV_PART_MAIN);
@@ -369,23 +374,112 @@ void lv_update_plugin_parameter(Plugin &plugin, PluginParameter &param){
     }
 }
 
-void mod_set_current_pedalboard(const EventModPedalboardChanged &e){
+void lv_mod_create(lv_obj_t *parent){
+
+    lv_obj_set_flex_flow(parent, LV_FLEX_FLOW_COLUMN);
+
+    // mod_control
+    lv_obj_t *controlContainer = lv_obj_create(parent);
+    lv_obj_set_size(controlContainer, LV_PCT(100), LV_PCT(20));
+    lv_obj_set_style_pad_left(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_scrollable(controlContainer, false);
+
+    static lv_coord_t controlContainerDsc[] = {0, LV_GRID_TEMPLATE_LAST};
+    lv_obj_set_style_grid_row_dsc_array(controlContainer, controlContainerDsc, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_bg_color(controlContainer, lv_color_hex(0x9a9fc4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(controlContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(controlContainer, lv_color_hex(0x3148bb), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(controlContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(controlContainer, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    // banks
+    bankDropdown = lv_dropdown_create(controlContainer);
+    lv_obj_set_pos(bankDropdown, 9, 52);
+    lv_obj_set_size(bankDropdown, 197, LV_SIZE_CONTENT);
+    lv_dropdown_set_options_static(bankDropdown, "");
+    lv_dropdown_set_selected(bankDropdown, 0);
+
+    // banks_label
+    lv_obj_t *bankLabel = lv_label_create(controlContainer);
+    lv_obj_set_pos(bankLabel, 9, 19);
+    lv_obj_set_size(bankLabel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_label_set_text_static(bankLabel, "Banks");
+
+    // pedalboards
+    pedalboardsDropdown = lv_dropdown_create(controlContainer);
+    lv_obj_set_pos(pedalboardsDropdown, 224, 52);
+    lv_obj_set_size(pedalboardsDropdown, 367, LV_SIZE_CONTENT);
+    lv_dropdown_set_options_static(pedalboardsDropdown, "");
+    lv_dropdown_set_selected(pedalboardsDropdown, 0);
+
+    // pedalboards_label
+    lv_obj_t *pedalboardsLabel = lv_label_create(controlContainer);
+    lv_obj_set_pos(pedalboardsLabel, 224, 19);
+    lv_obj_set_size(pedalboardsLabel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_label_set_text_static(pedalboardsLabel, "Pedalboards");
+
+    // snapshots
+    snapshotsDropdown = lv_dropdown_create(controlContainer);
+    lv_obj_set_pos(snapshotsDropdown, 609, 52);
+    lv_obj_set_size(snapshotsDropdown, 298, LV_SIZE_CONTENT);
+    lv_dropdown_set_options_static(snapshotsDropdown, "");
+    lv_dropdown_set_selected(snapshotsDropdown, 0);
+
+    // snapshots_label
+    lv_obj_t *snapshotsLabel = lv_label_create(controlContainer);
+    lv_obj_set_pos(snapshotsLabel, 609, 19);
+    lv_obj_set_size(snapshotsLabel, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_label_set_text_static(snapshotsLabel, "Snapshots");
+
+    // effects_container
+    effectsContainer = lv_obj_create(parent);
+    lv_obj_set_size(effectsContainer, LV_PCT(100), LV_PCT(80));
+    lv_obj_set_style_pad_left(effectsContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(effectsContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(effectsContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(effectsContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(effectsContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_scrollable(effectsContainer, false);
+    lv_obj_set_style_border_color(effectsContainer, lv_color_hex(0x4b66c4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(effectsContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(effectsContainer, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(effectsContainer, lv_color_hex(0xafabd6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(effectsContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_flex_flow(effectsContainer, LV_FLEX_FLOW_ROW_WRAP, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_layout(effectsContainer, LV_LAYOUT_FLEX, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    static lv_coord_t effectsContainerDsc[] = {0, LV_GRID_TEMPLATE_LAST};
+    lv_obj_set_style_grid_row_dsc_array(effectsContainer, effectsContainerDsc, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_flex_main_place(effectsContainer, LV_FLEX_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_flex_track_place(effectsContainer, LV_FLEX_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_add_event_cb(pedalboardsDropdown, pedalboard_changed, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(snapshotsDropdown, pedalboard_snapshot_changed, LV_EVENT_VALUE_CHANGED, NULL);
+}
+
+void mod_set_current_pedalboard(Pedalboard pedalboard){
     if(currentPedalboard)
         currentPedalboard.reset();
 
-    currentPedalboard = std::make_unique<Pedalboard>(e.pedalboard);
+    currentPedalboard = std::make_unique<Pedalboard>(pedalboard);
     lv_pedalboard_create();
 }
 
-void mod_set_plugin_parameter(const EventModEffectParamChanged &e){
+void mod_set_plugin_parameter(std::string instance_id, std::string symbol, float value){
     if (currentPedalboard == nullptr)
         return;
 
     for(Plugin &plugin: currentPedalboard->plugins){
-        if(plugin.instance_id == e.instance_id){
+        if(plugin.instance_id == instance_id){
             for(PluginParameter &param: plugin.parameters){
-                if(param.symbol == e.symbol){
-                    param.currentValue = e.value;
+                if(param.symbol == symbol){
+                    param.currentValue = value;
 
                     lv_update_plugin_parameter(plugin, param);
                     break;
@@ -395,19 +489,19 @@ void mod_set_plugin_parameter(const EventModEffectParamChanged &e){
     }
 }
 
-void mod_set_current_snapshot(const EventModPedalboardSnapshotChanged &e){
+void mod_set_current_snapshot(int index, std::string name){
     if (currentPedalboard == nullptr)
         return;
-    if(e.index >= currentPedalboard->snapshots.size())
+    if(index >= currentPedalboard->snapshots.size())
         return;
 
-    currentPedalboard->snapshot_index = e.index;
-    lv_dropdown_set_selected(objects.snapshots, (uint32_t)(currentPedalboard->snapshot_index));
+    currentPedalboard->snapshot_index = index;
+    lv_dropdown_set_selected(snapshotsDropdown, (uint32_t)(currentPedalboard->snapshot_index));
 }
 
-void mod_set_pedalboard_list(const EventModPedalboardsList &e){
-    for (auto pedal : e.pedalboards)
+void mod_set_pedalboard_list(std::vector<std::string> pedalboards){
+    for (auto pedal : pedalboards)
     {
-        lv_dropdown_add_option(objects.pedalboards, pedal.c_str(), LV_DROPDOWN_POS_LAST);
+        lv_dropdown_add_option(pedalboardsDropdown, pedal.c_str(), LV_DROPDOWN_POS_LAST);
     }
 }

@@ -7,6 +7,9 @@
 
 std::list<RecordedFile> recordedFiles;
 
+lv_obj_t *filesContainer = nullptr;
+lv_obj_t *recordButton = nullptr;
+
 void play_clicked(lv_event_t *e){
 
     RecordedFile *recordedFile = (RecordedFile*)lv_event_get_user_data(e);
@@ -21,6 +24,60 @@ void play_clicked(lv_event_t *e){
     }
 }
 
+void lv_player_create(lv_obj_t *parent){
+    lv_obj_set_flex_flow(parent, LV_FLEX_FLOW_COLUMN);
+
+    // play_control
+    lv_obj_t *controlContainer = lv_obj_create(parent);
+    lv_obj_set_size(controlContainer, LV_PCT(100), LV_PCT(20));
+    lv_obj_set_style_pad_left(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(controlContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_scrollable(controlContainer, false);
+
+    static lv_coord_t dsc[] = {0, LV_GRID_TEMPLATE_LAST};
+    lv_obj_set_style_grid_row_dsc_array(controlContainer, dsc, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_bg_color(controlContainer, lv_color_hex(0x9a9fc4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(controlContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(controlContainer, lv_color_hex(0x3148bb), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(controlContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(controlContainer, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    // player_record_button
+    recordButton = lv_switch_create(controlContainer);
+    lv_obj_set_pos(recordButton, 158, 23);
+    lv_obj_set_size(recordButton, 103, 40);
+
+    // player_recording_duration_label
+    lv_obj_t *recordDurationLabel = lv_label_create(controlContainer);
+    lv_obj_set_pos(recordDurationLabel, 394, 20);
+    lv_obj_set_size(recordDurationLabel, LV_PCT(30), LV_PCT(50));
+    lv_obj_set_style_bg_color(recordDurationLabel, lv_color_hex(0x1dbccb), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(recordDurationLabel, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text_static(recordDurationLabel, "");
+
+    // player_files
+    filesContainer = lv_obj_create(parent);
+    lv_obj_set_size(filesContainer, LV_PCT(100), LV_PCT(80));
+    lv_obj_set_style_pad_left(filesContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(filesContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(filesContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(filesContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(filesContainer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(filesContainer, lv_color_hex(0x4b66c4), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(filesContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(filesContainer, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(filesContainer, lv_color_hex(0xafabd6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(filesContainer, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_layout(filesContainer, LV_LAYOUT_FLEX, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_flex_flow(filesContainer, LV_FLEX_FLOW_ROW_WRAP, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_add_event_cb(recordButton, player_record_changed, LV_EVENT_VALUE_CHANGED, NULL);
+}
+
 void lv_create_recorded_file(std::string name){
 
     recordedFiles.emplace_back();
@@ -28,7 +85,7 @@ void lv_create_recorded_file(std::string name){
     recorded.name = name;
     recorded.playing = false;
 
-    recorded.container = lv_obj_create(objects.player_files);
+    recorded.container = lv_obj_create(filesContainer);
     lv_obj_set_size(recorded.container, LV_PCT(100), 50);
     lv_obj_set_style_pad_left(recorded.container, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_top(recorded.container, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -63,9 +120,9 @@ void player_record_changed(lv_event_t *e){
     transport.sendCommand(CmdPlayerRecord{.state = state});
 }
 
-void player_set_file_list(EventRecorderFileList e){
+void player_set_file_list(std::vector<std::string> files){
 
-    for (const auto& name : e.files) {
+    for (const auto& name : files) {
         bool found = false;
         for (auto it = recordedFiles.begin(); it != recordedFiles.end(); ++it) {
             if((*it).name == name){
@@ -79,7 +136,7 @@ void player_set_file_list(EventRecorderFileList e){
     }
 }
 
-void player_set_recording(EventRecorderRecording e){
+void player_set_recording(int start){
     for(RecordedFile &file: recordedFiles){
         if(file.playing){
             file.playing = false;
@@ -87,16 +144,16 @@ void player_set_recording(EventRecorderRecording e){
         }
     }
 
-    lv_obj_add_state(objects.player_record_button, LV_STATE_CHECKED);
+    lv_obj_add_state(recordButton, LV_STATE_CHECKED);
 }
 
-void player_set_playing(EventRecorderPlaying e){
+void player_set_playing(std::string file){
 
     for(RecordedFile &record: recordedFiles){
-        if(record.name != e.file && record.playing){
+        if(record.name != file && record.playing){
             record.playing = false;
             lv_label_set_text(record.play_button_label, "Play");
-        }else if(record.name == e.file){
+        }else if(record.name == file){
             record.playing = true;
             lv_label_set_text(record.play_button_label, "Playing");
         }
@@ -104,12 +161,12 @@ void player_set_playing(EventRecorderPlaying e){
 
 }
 
-void player_set_stopped(EventRecorderStopped e){
+void player_set_stopped(void){
     for(RecordedFile &record: recordedFiles){
         if(record.playing){
             record.playing = false;
             lv_label_set_text(record.play_button_label, "Play");
         }
     }
-    lv_obj_remove_state(objects.player_record_button, LV_STATE_CHECKED);
+    lv_obj_remove_state(recordButton, LV_STATE_CHECKED);
 }

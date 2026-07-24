@@ -6,15 +6,103 @@
 #include "mod.hpp"
 #include "looper.hpp"
 #include "sequencer.hpp"
-#include "tuner.hpp"
 #include "player.hpp"
 
-// #include "rx/rx.hpp"
 #include "transport/zmq_transport.hpp"
 #include "protocol/protocol.hpp"
 #include <nlohmann/json.hpp>
 
 ZmqTransport transport;
+
+lv_obj_t *tileview = nullptr;
+lv_obj_t *seqTile = nullptr;
+lv_obj_t *looperTile = nullptr;
+lv_obj_t *modTile = nullptr;
+lv_obj_t *recorderTile = nullptr;
+lv_obj_t *selectedTile = nullptr;
+
+lv_style_t tileButtonStyle;
+
+void buttonClicked(lv_event_t *e){
+    lv_obj_t *tile = (lv_obj_t*)lv_event_get_user_data(e);
+    lv_tileview_set_tile(tileview, tile, LV_ANIM_ON);
+
+    lv_obj_set_hidden(selectedTile, true);
+    selectedTile = tile;
+    lv_obj_set_hidden(selectedTile, false);
+}
+
+void create_tileview(){
+
+    lv_style_init(&tileButtonStyle);
+    lv_style_set_radius(&tileButtonStyle, 14);
+    lv_style_set_bg_opa(&tileButtonStyle, (255 * 100 / 100));
+    lv_style_set_bg_color(&tileButtonStyle, lv_color_hex(0x6366f1));
+    lv_style_set_border_width(&tileButtonStyle, 2);
+    lv_style_set_border_color(&tileButtonStyle, lv_color_hex(0x4338ca));
+    lv_style_set_shadow_color(&tileButtonStyle, lv_color_hex(0x312e81));
+    lv_style_set_shadow_width(&tileButtonStyle, 14);
+    lv_style_set_shadow_offset_y(&tileButtonStyle, 5);
+    lv_style_set_shadow_opa(&tileButtonStyle, 120);
+    lv_style_set_pad_all(&tileButtonStyle, 16);
+    lv_style_set_text_color(&tileButtonStyle, lv_color_hex(0xffffff));
+    lv_style_set_size(&tileButtonStyle, 100, 100);
+    lv_style_set_text_color(&tileButtonStyle, lv_color_white());
+    lv_style_set_text_align(&tileButtonStyle, LV_TEXT_ALIGN_CENTER);
+    lv_style_set_margin_all(&tileButtonStyle, 15);
+    tileview = lv_tileview_create(lv_screen_active());
+
+    // main tile
+    lv_obj_t *mainTile = lv_tileview_add_tile(tileview, 0, 0, LV_DIR_NONE);
+    lv_obj_set_flex_flow(mainTile, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(mainTile, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+
+    // seq tile
+    lv_obj_t *seq_button = lv_button_create(mainTile);
+    lv_obj_add_style(seq_button, &tileButtonStyle, 0);
+    lv_obj_t *seq_button_label = lv_label_create(seq_button);
+    lv_obj_center(seq_button_label);
+    lv_label_set_text(seq_button_label, "Seq");
+    seqTile = lv_tileview_add_tile(tileview, 1, 0, LV_DIR_LEFT);
+    lv_sequencer_create(seqTile);
+    selectedTile = seqTile;
+
+    // looper tile
+    lv_obj_t *looper_button = lv_button_create(mainTile);
+    lv_obj_add_style(looper_button, &tileButtonStyle, 0);
+    lv_obj_t *looper_button_label = lv_label_create(looper_button);
+    lv_obj_center(looper_button_label);
+    lv_label_set_text(looper_button_label, "Looper");
+    looperTile = lv_tileview_add_tile(tileview, 1, 0, LV_DIR_LEFT);
+    lv_looper_create(looperTile);
+    lv_obj_set_hidden(looperTile, true);
+
+    // mod tile
+    lv_obj_t *mod_button = lv_button_create(mainTile);
+    lv_obj_add_style(mod_button, &tileButtonStyle, 0);
+    lv_obj_t *mod_button_label = lv_label_create(mod_button);
+    lv_obj_center(mod_button_label);
+    lv_label_set_text(mod_button_label, "Pedalboard");
+    modTile = lv_tileview_add_tile(tileview, 1, 0, LV_DIR_LEFT);
+    lv_mod_create(modTile);
+    lv_obj_set_hidden(modTile, true);
+
+    // player tile
+    lv_obj_t *recorder_button = lv_button_create(mainTile);
+    lv_obj_add_style(recorder_button, &tileButtonStyle, 0);
+    lv_obj_t *recorder_button_label = lv_label_create(recorder_button);
+    lv_obj_center(recorder_button_label);
+    lv_label_set_text(recorder_button_label, "Rec/Play");
+    recorderTile = lv_tileview_add_tile(tileview, 1, 0, LV_DIR_LEFT);
+    lv_player_create(recorderTile);
+    lv_obj_set_hidden(recorderTile, true);
+
+    lv_obj_add_event_cb(seq_button, buttonClicked, LV_EVENT_CLICKED, (void*)seqTile);
+    lv_obj_add_event_cb(looper_button, buttonClicked, LV_EVENT_CLICKED, (void*)looperTile);
+    lv_obj_add_event_cb(mod_button, buttonClicked, LV_EVENT_CLICKED, (void*)modTile);
+    lv_obj_add_event_cb(recorder_button, buttonClicked, LV_EVENT_CLICKED, (void*)recorderTile);
+}
+
 
 void init_ui()
 {
@@ -53,11 +141,8 @@ void init_ui()
 #endif
 
     // init eez
-    ui_init();
-}
-
-void on_event_tuner(EventTuner e){
-    tuner_update(e.note, e.cents);
+    // ui_init();
+    create_tileview();
 }
 
 template <class... Ts>
@@ -71,7 +156,7 @@ Overloaded(Ts...) -> Overloaded<Ts...>;
 
 const auto events_handlers = Overloaded{
     [](const EventLooperLoopCount &m)
-    { looper_set_loops_count(m); },
+    { looper_set_loops_count(m.count); },
     [](const EventLooperLoopPos &m)
     { looper_set_loop_pos(m.id, m.pos); },
     [](const EventLooperLoopState &m)
@@ -79,31 +164,29 @@ const auto events_handlers = Overloaded{
     [](const EventLooperLoopLen &m)
     { looper_set_loop_len(m.id, m.len); },
     [](const EventLooperLoopList &m)
-    { looper_set_loop_list(m); },
+    { looper_set_loop_list(m.loops, m.selected); },
     [](const EventLooperLoopSelected &m)
-    { looper_set_loop_selected(m); },
+    { looper_set_loop_selected(m.id); },
     [](const EventModPedalboardsList &m)
-    { mod_set_pedalboard_list(m); },
+    { mod_set_pedalboard_list(m.pedalboards); },
     [](const EventModPedalboardChanged &m)
-    { mod_set_current_pedalboard(m); },
+    { mod_set_current_pedalboard(m.pedalboard); },
     [](const EventModEffectParamChanged &m)
-    { mod_set_plugin_parameter(m); },
+    { mod_set_plugin_parameter(m.instance_id, m.symbol, m.value); },
     [](const EventModPedalboardSnapshotChanged &m)
-    { mod_set_current_snapshot(m); },
+    { mod_set_current_snapshot(m.index, m.name); },
     [](const EventSequencerMidiFilesList &m)
-    { sequencer_set_file_list(m); },
+    { sequencer_set_file_list(m.midiFiles); },
     [](const EventSequencerPosition &m)
-    { sequencer_set_position(m); },
-    [](const EventTuner &m)
-    { on_event_tuner(m); },
+    { sequencer_set_position(m.pos); },
     [](const EventRecorderFileList &m)
-    { player_set_file_list(m); },
+    { player_set_file_list(m.files); },
     [](const EventRecorderPlaying &m)
-    { player_set_playing(m); },
+    { player_set_playing(m.file); },
     [](const EventRecorderRecording&m)
-    { player_set_recording(m); },
+    { player_set_recording(m.start); },
     [](const EventRecorderStopped &m)
-    { player_set_stopped(m); }
+    { player_set_stopped(); }
 };
 
 void readEvents(lv_timer_t *timer)
@@ -124,30 +207,11 @@ int main(int argc, char **argv)
     init_ui();
 
     lv_timer_create(readEvents, 10, &transport.eventsQueue);
-    // looper callbacks
-    lv_obj_add_event_cb(objects.loop_add_button, add_loop_clicked, LV_EVENT_CLICKED, NULL);
-    lv_obj_add_event_cb(objects.loop_remove_button, remove_loop_clicked, LV_EVENT_CLICKED, NULL);
-
-    // pedalboard callbacks
-    lv_obj_add_event_cb(objects.pedalboards, pedalboard_changed, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.snapshots, pedalboard_snapshot_changed, LV_EVENT_VALUE_CHANGED, NULL);
-
-    //sequencer callbacks
-    lv_obj_add_event_cb(objects.sequencer_midi_files_list, midi_file_changed, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.sequencer_slider_bpm, bpm_changed, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.sequencer_slider_volume, volume_changed, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.sequencer_mute_button, sequencer_mute_changed, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.sequencer_state_button, sequencer_state_changed, LV_EVENT_VALUE_CHANGED, NULL);
-
-    //player callbacks
-    lv_obj_add_event_cb(objects.player_record_button, player_record_changed, LV_EVENT_VALUE_CHANGED, NULL);
-
-    //tuner callbacks
-    lv_obj_add_event_cb(objects.tuner_state, tuner_state, LV_EVENT_VALUE_CHANGED, NULL);
 
     transport.sendCommand(CmdLooperListLoops{});
     transport.sendCommand(CmdModListPedalboards{});
     transport.sendCommand(CmdSequencerListMidiFiles{});
+    transport.sendCommand(CmdPlayerListFiles{});
 
     uint32_t sleep_ms;
     while (true)

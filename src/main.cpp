@@ -51,6 +51,7 @@ void create_tileview(){
     lv_style_set_text_align(&tileButtonStyle, LV_TEXT_ALIGN_CENTER);
     lv_style_set_margin_all(&tileButtonStyle, 15);
     tileview = lv_tileview_create(lv_screen_active());
+    lv_obj_set_scrollbar_mode(tileview, LV_SCROLLBAR_MODE_OFF);
 
     // main tile
     lv_obj_t *mainTile = lv_tileview_add_tile(tileview, 0, 0, LV_DIR_NONE);

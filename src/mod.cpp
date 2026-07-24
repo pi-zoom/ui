@@ -294,7 +294,7 @@ void lv_plugin_overlay_create(lv_event_t *e)
 
 void lv_plugin_create(Plugin &plugin)
 {
-    plugin.container = lv_obj_create(currentPedalboard->plugins_container);
+    plugin.container = lv_obj_create(effectsContainer);
     lv_obj_set_style_bg_color(plugin.container, lv_color_hex(0x0d5bdd), LV_PART_MAIN | LV_STATE_DEFAULT);
 
     //bypass
@@ -332,11 +332,6 @@ void lv_pedalboard_create(){
         lv_dropdown_add_option(snapshotsDropdown, snapshot.name.c_str(), LV_DROPDOWN_POS_LAST);
     }
     lv_dropdown_set_selected(snapshotsDropdown, (uint32_t)(currentPedalboard->snapshot_index));
-
-    currentPedalboard->plugins_container = lv_obj_create(effectsContainer);
-    lv_obj_set_size(currentPedalboard->plugins_container, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_flex_flow(currentPedalboard->plugins_container, LV_FLEX_FLOW_ROW_WRAP, LV_PART_MAIN);
-    lv_obj_set_style_layout(currentPedalboard->plugins_container, LV_LAYOUT_FLEX, LV_PART_MAIN);
 
     for (Plugin &plugin : currentPedalboard->plugins)
     {
@@ -466,6 +461,9 @@ void lv_mod_create(lv_obj_t *parent){
 void mod_set_current_pedalboard(Pedalboard pedalboard){
     if(currentPedalboard)
         currentPedalboard.reset();
+
+    if(effectsContainer)
+        lv_obj_clean(effectsContainer);
 
     currentPedalboard = std::make_unique<Pedalboard>(pedalboard);
     lv_pedalboard_create();

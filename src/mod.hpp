@@ -83,18 +83,11 @@ struct Pedalboard
             lv_obj_delete_async(effectParamEditOverlay);
             effectParamEditOverlay = nullptr;
         }
-
-        if (plugins_container)
-        {
-            lv_obj_delete_async(plugins_container);
-            plugins_container = nullptr;
-        }
     }
     std::string name;
     std::vector<Plugin> plugins;
     int snapshot_index;
     std::vector<Snapshot> snapshots;
-    lv_obj_t *plugins_container = nullptr;
     lv_obj_t *effectParamEditOverlay = nullptr;
 };
 

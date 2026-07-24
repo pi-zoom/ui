@@ -295,7 +295,40 @@ void lv_plugin_overlay_create(lv_event_t *e)
 void lv_plugin_create(Plugin &plugin)
 {
     plugin.container = lv_obj_create(effectsContainer);
-    lv_obj_set_style_bg_color(plugin.container, lv_color_hex(0x0d5bdd), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_size(plugin.container, 300, 100);
+
+    // use someting else to store
+    lv_color_t color;
+    for(const std::string &category: plugin.category){
+        if(category == "Delay")
+            color = lv_color_hex(0x32a852);
+        else if(category == "Distortion")
+            color = lv_color_hex(0xa84432);
+        else if(category == "Dynamics")
+            color = lv_color_hex(0xccc129);
+        else if(category == "Filter")
+            color = lv_color_hex(0x29cc70);
+        else if(category == "Generator")
+            color = lv_color_hex(0x18dbce);
+        else if(category == "Midiutility")
+            color = lv_color_hex(0x10a7e3);
+        else if(category == "Modulator")
+            color = lv_color_hex(0x0b3fb0);
+        else if(category == "Reverb")
+            color = lv_color_hex(0x670fd9);
+        else if(category == "Simulator")
+            color = lv_color_hex(0xbe09de);
+        else if(category == "Spacial")
+            color = lv_color_hex(0xed0c88);
+        else if(category == "Spectral")
+            color = lv_color_hex(0xd90939);
+        else if(category == "Utility")
+            color = lv_color_hex(0xf7020f);
+        else
+            color = lv_color_hex(0x0d5bdd);
+
+    }
+    lv_obj_set_style_bg_color(plugin.container, color, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     //bypass
     if(!plugin.bypassed){
